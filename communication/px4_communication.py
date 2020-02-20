@@ -40,7 +40,7 @@ class PX4Communication:
         self.cmd_pose_enu_sub = rospy.Subscriber("/xtdrone/cmd_pose_enu", Pose, self.cmd_pose_enu_callback)
         self.cmd_vel_flu_sub = rospy.Subscriber("/xtdrone/cmd_vel_flu", Twist, self.cmd_vel_flu_callback)
         self.cmd_vel_enu_sub = rospy.Subscriber("/xtdrone/cmd_vel_enu", Twist, self.cmd_vel_enu_callback)
-        self.cmd_sub = rospy.Subscriber("/utdrone/cmd",String,self.cmd_callback)
+        self.cmd_sub = rospy.Subscriber("/xtdrone/cmd",String,self.cmd_callback)
 
         '''
         ros publishers
