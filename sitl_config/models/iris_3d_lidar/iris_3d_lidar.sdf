@@ -1,6 +1,6 @@
  <?xml version="1.0" ?>
 <sdf version='1.5'>
-  <model name='iris_lidar'>
+  <model name='iris_3d_lidar'>
 
     <include>
       <uri>model://iris</uri>
@@ -8,11 +8,11 @@
 
 <!-- For Hokuyo Lidar Payload -->
       <include>
-        <uri>model://hokuyo_lidar</uri>
-        <pose>0 0 0.1 0 0 0</pose>
+        <uri>model://3d_lidar</uri>
+        <pose>0 0 0.2 0 0 0</pose>
       </include>
     <joint name="lidar_joint" type="fixed">
-      <child>hokuyo_lidar::link</child>
+      <child>3d_lidar::link</child>
       <parent>iris::base_link</parent>
       <axis>
         <xyz>0 0 1</xyz>
@@ -22,7 +22,6 @@
         </limit>
       </axis>
     </joint>
-
 <!-- For Stereo Camera Payload -->
       <include>
         <uri>model://stereo_cam</uri>
@@ -40,7 +39,6 @@
         </limit>
       </axis>
     </joint>
-
   </model>
 </sdf>
 <!-- vim: set noet fenc=utf-8 ff=unix sts=0 sw=4 ts=4 : -->
