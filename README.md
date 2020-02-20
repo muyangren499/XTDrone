@@ -14,6 +14,7 @@
 <img src="./gif/motion_planning_demo_1.gif" alt="image" style="zoom:25%;" />    
 6. 多机协同
 <img src="./gif/cooperation.gif" alt="image" style="zoom: 80%;" />  
+
 #### 软件架构
 - 通信:PX4与ROS之间的通信封装进Python类
 - 控制：键盘控制无人机速度和偏航转速
