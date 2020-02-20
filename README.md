@@ -4,14 +4,19 @@
 这是基于PX4和ROS的无人机仿真平台，在这个平台上，开发者可以快速验证算法。如：
 1. 目标检测与追踪
 <img src="./gif/human_tracking.gif" width="640" height="368" /> 
+
 2. 视觉SLAM
 <img src="./gif/vslam.gif" width="640" height="368" /> 
+
 3. 激光SLAM
 <img src="./gif/laser_slam.gif" width="640" height="368" /> 
+
 4. VIO 
 <img src="./gif/vslam.gif" width="640" height="368" />  
+
 5. 运动规划
-<img src="./gif/motion_planning_demo_1.gif" width="640" height="368" />    
+<img src="./gif/motion_planning_demo_1.gif" width="640" height="368" />  
+  
 6. 多机协同
 <img src="./gif/cooperation.gif" width="640" height="368" />  
 
