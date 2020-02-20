@@ -41,15 +41,16 @@ msg = """
 Control Your XTDrone!
 ---------------------------
 Moving around:
-   q    w    e
-   a    s    d
-        x
+        w               i
+   a    s    d     j    k    l
+        x               ,
 
 w/x : increase/decrease forward velocity (-0.2~0.2)
 a/d : increase/decrease leftward velocity (-0.2~0.2)
-q/e : increase/decrease angular velocity (-0.1~0.1)
+i/, : increase/decrease upward velocity (-0.2~0.2)
+j/l : increase/decrease angular velocity (-0.1~0.1)
 
-space key, s : force stop
+s or k : force stop
 
 CTRL-C to quit
 """
@@ -68,8 +69,8 @@ def getKey():
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
 
-def vels(target_forward_vel, target_leftward_vel,target_angular_vel):
-    return "currently:\t forward x %s\t leftward y %s\t angular %s " % (target_forward_vel, target_leftward_vel, target_angular_vel)
+def vels(target_forward_vel, target_leftward_vel, target_upward_vel,target_angular_vel):
+    return "currently:\t forward x %s\t leftward y %s\t upward z %s\t angular %s " % (target_forward_vel, target_leftward_vel, target_upward_vel, target_angular_vel)
 
 def makeSimpleProfile(output, input, slop):
     if input > output:
@@ -101,15 +102,17 @@ def checkAngularLimitVelocity(vel):
 if __name__=="__main__":
     settings = termios.tcgetattr(sys.stdin)
 
-    rospy.init_node('keybo')
-    pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
+    rospy.init_node('keyboard_control')
+    pub = rospy.Publisher('/xtdrone/cmd_vel_flu', Twist, queue_size=10)
 
 
     target_forward_vel   = 0.0
     target_leftward_vel   = 0.0
+    target_upward_vel   = 0.0
     target_angular_vel  = 0.0
     control_forward_vel  = 0.0
     control_leftward_vel  = 0.0
+    control_upward_vel  = 0.0
     control_angular_vel = 0.0
 
     try:
@@ -118,30 +121,38 @@ if __name__=="__main__":
             key = getKey()
             if key == 'w' :
                 target_forward_vel = checkLinearLimitVelocity(target_forward_vel + LIN_VEL_STEP_SIZE)
-                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
+                print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'x' :
                 target_forward_vel = checkLinearLimitVelocity(target_forward_vel - LIN_VEL_STEP_SIZE)
-                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
+                print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'a' :
                 target_leftward_vel = checkLinearLimitVelocity(target_leftward_vel + LIN_VEL_STEP_SIZE)
-                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
+                print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'd' :
                 target_leftward_vel = checkLinearLimitVelocity(target_leftward_vel - LIN_VEL_STEP_SIZE)
-                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
-            elif key == 'q':
+                print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
+            elif key == 'i' :
+                target_upward_vel = checkLinearLimitVelocity(target_upward_vel + LIN_VEL_STEP_SIZE)
+                print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
+            elif key == ',' :
+                target_upward_vel = checkLinearLimitVelocity(target_upward_vel - LIN_VEL_STEP_SIZE)
+                print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
+            elif key == 'j':
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel + ANG_VEL_STEP_SIZE)
-                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
-            elif key == 'e':
+                print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
+            elif key == 'l':
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel - ANG_VEL_STEP_SIZE)
-                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
-            elif key == ' ' or key == 's' :
+                print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
+            elif key == 's' or key == 'k' :
                 target_forward_vel   = 0.0
                 target_leftward_vel   = 0.0
+                target_upward_vel   = 0.0
                 target_angular_vel  = 0.0
                 control_forward_vel  = 0.0
                 control_leftward_vel  = 0.0
+                control_upward_vel  = 0.0
                 control_angular_vel = 0.0
-                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
+                print(vels(target_forward_vel,-target_leftward_vel,target_upward_vel,target_angular_vel))
             else:
                 if (key == '\x03'):
                     break
@@ -150,7 +161,8 @@ if __name__=="__main__":
 
             control_forward_vel = makeSimpleProfile(control_forward_vel, target_forward_vel, (LIN_VEL_STEP_SIZE/2.0))
             control_leftward_vel = makeSimpleProfile(control_leftward_vel, target_leftward_vel, (LIN_VEL_STEP_SIZE/2.0))
-            twist.linear.x = control_forward_vel; twist.linear.y = control_leftward_vel; twist.linear.z = 0.0
+            control_upward_vel = makeSimpleProfile(control_upward_vel, target_upward_vel, (LIN_VEL_STEP_SIZE/2.0))
+            twist.linear.x = control_forward_vel; twist.linear.y = control_leftward_vel; twist.linear.z = control_upward_vel
 
             control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0))
             twist.angular.x = 0.0; twist.angular.y = 0.0;  twist.angular.z = control_angular_vel
