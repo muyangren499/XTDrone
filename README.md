@@ -12,7 +12,7 @@
 <img src="./gif/laser_slam.gif" width="640" height="368" /> 
 
 4. VIO 
-<img src="./gif/vslam.gif" width="640" height="368" />  
+<img src="./gif/vins.gif" width="640" height="368" />  
 
 5. 运动规划
 <img src="./gif/motion_planning_demo_1.gif" width="640" height="368" />  
