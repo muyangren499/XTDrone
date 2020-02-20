@@ -3,17 +3,17 @@
 #### 介绍
 这是基于PX4和ROS的无人机仿真平台，在这个平台上，开发者可以快速验证算法。如：
 1. 目标检测与追踪
-![image](./gif/human_tracking.gif)
+<img src="./gif/human_tracking.gif" alt="image" style="zoom: 25%;" /> 
 2. 视觉SLAM
-![image](./gif/vslam.gif)
+<img src="./gif/vslam.gif" alt="image" style="zoom:25%;" /> 
 3. 激光SLAM
-![image](./gif/laser_slam.gif)
+<img src="./gif/laser_slam.gif" alt="image" style="zoom:25%;" /> 
 4. VIO 
-![image](./gif/vio.gif)  
+<img src="./gif/vslam.gif" alt="image" style="zoom:25%;" />  
 5. 运动规划
-![image](./gif/motion_planning.gif)    
+<img src="./gif/motion_planning_demo_1.gif" alt="image" style="zoom:25%;" />    
 6. 多机协同
-![image](./gif/cooperation.gif) 
+<img src="./gif/cooperation.gif" alt="image" style="zoom: 80%;" />  
 #### 软件架构
 - 通信:PX4与ROS之间的通信封装进Python类
 - 控制：键盘控制无人机速度和偏航转速
