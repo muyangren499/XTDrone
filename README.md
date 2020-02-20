@@ -3,17 +3,17 @@
 #### 介绍
 这是基于PX4和ROS的无人机仿真平台，在这个平台上，开发者可以快速验证算法。如：
 1. 目标检测与追踪
-![image](https://gitee.com/robin_shaun/XTDrone/tree/master/gif/human_tracking.gif)
+![image](./gif/human_tracking.gif)
 2. 视觉SLAM
-![image](https://gitee.com/robin_shaun/XTDrone/tree/master/gif/vslam.gif)
+![image](./gif/vslam.gif)
 3. 激光SLAM
-![image](https://gitee.com/robin_shaun/XTDrone/tree/master/gif/laser_slam.gif)
+![image](./gif/laser_slam.gif)
 4. VIO 
-![image](https://gitee.com/robin_shaun/XTDrone/tree/master/gif/vio.gif)  
+![image](./gif/vio.gif)  
 5. 运动规划
-![image](https://gitee.com/robin_shaun/XTDrone/tree/master/gif/motion_planning.gif)    
+![image](./gif/motion_planning.gif)    
 6. 多机协同
-![image](https://gitee.com/robin_shaun/XTDrone/tree/master/gif/cooperation.gif) 
+![image](./gif/cooperation.gif) 
 #### 软件架构
 - 通信:PX4与ROS之间的通信封装进Python类
 - 控制：键盘控制无人机速度和偏航转速
