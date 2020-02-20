@@ -1,4 +1,5 @@
 import rospy
+import tf
 from mavros_msgs.msg import GlobalPositionTarget, State, PositionTarget
 from mavros_msgs.srv import CommandBool, CommandTOL, SetMode
 from geometry_msgs.msg import PoseStamped, TwistStamped, Twist
@@ -19,7 +20,7 @@ class Px4Controller:
         self.local_pose = None
         self.current_state = None
         self.current_heading = None
-        self.takeoff_height = 2
+        self.takeoff_height = 1
         self.local_enu_position = None
 
         self.cur_target_pose = PoseStamped()
@@ -66,10 +67,7 @@ class Px4Controller:
 
     def start(self):
         rospy.init_node("offboard_node")
-
-        self.cur_target_pose = self.construct_pose_target(x=self.local_pose.pose.position.x, y=self.local_pose.pose.position.y, z=self.takeoff_height)
-
-        #print ("self.cur_target_pose:", self.cur_target_pose, type(self.cur_target_pose))
+        self.cur_target_pose = self.construct_pose_target(x=self.local_pose.pose.position.x, y=self.local_pose.pose.position.y, z=self.takeoff_height,yaw=self.current_heading)
 
         for i in range(20):
             self.pose_target_pub.publish(self.cur_target_pose)
@@ -104,14 +102,18 @@ class Px4Controller:
             time.sleep(0.1)
 
 
-    def construct_pose_target(self, x=0, y=0, z=0):
-        target_raw_pose = PoseStamped()
-        target_raw_pose.header.stamp = rospy.Time.now()
-        target_raw_pose.pose.position.y = x
-        target_raw_pose.pose.position.y = y
-        target_raw_pose.pose.position.z = z
-
-        return target_raw_pose
+    def construct_pose_target(self, x=0, y=0, z=0, yaw=0):
+        target_pose = PoseStamped()
+        target_pose.header.stamp = rospy.Time.now()
+        target_pose.pose.position.y = x
+        target_pose.pose.position.y = y
+        target_pose.pose.position.z = z
+        quaternion = tf.transformations.quaternion_from_euler(0, 0, yaw)
+        target_pose.pose.orientation.x = quaternion[0]
+        target_pose.pose.orientation.y = quaternion[1]
+        target_pose.pose.orientation.z = quaternion[2]
+        target_pose.pose.orientation.w = quaternion[3]
+        return target_pose
 
 
 
@@ -209,10 +211,7 @@ class Px4Controller:
             body_y = FLU_y + self.local_pose.pose.position.y
             body_z = FLU_z + self.local_pose.pose.position.z
 
-            self.cur_target_pose = self.construct_pose_target(x=body_x,
-                                                         y=body_y,
-                                                         z=body_z,
-                                                         )
+            self.cur_target_pose = self.construct_pose_target(x=body_x, y=body_y, z=body_z)
 
 
         else:

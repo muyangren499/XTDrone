@@ -30,30 +30,24 @@
 import rospy
 from geometry_msgs.msg import Twist
 import sys, select, os
-if os.name == 'nt':
-  import msvcrt
-else:
-  import tty, termios
+import tty, termios
 
-BURGER_MAX_LIN_VEL = 0.22
-BURGER_MAX_ANG_VEL = 0.22
-
-WAFFLE_MAX_LIN_VEL = 0.26
-WAFFLE_MAX_ANG_VEL = 0.26
-
+MAX_LIN_VEL = 0.2
+MAX_ANG_VEL = 0.1
 LIN_VEL_STEP_SIZE = 0.02
-ANG_VEL_STEP_SIZE = 0.02
+ANG_VEL_STEP_SIZE = 0.01
 
 msg = """
-Control Your TurtleBot3!
+Control Your XTDrone!
 ---------------------------
 Moving around:
-        w
+   q    w    e
    a    s    d
         x
 
-w/x : increase/decrease linear velocity (Burger : ~ 0.22, Waffle and Waffle Pi : ~ 0.26)
-a/d : increase/decrease angular velocity (Burger : ~ 2.84, Waffle and Waffle Pi : ~ 1.82)
+w/x : increase/decrease forward velocity (-0.2~0.2)
+a/d : increase/decrease leftward velocity (-0.2~0.2)
+q/e : increase/decrease angular velocity (-0.1~0.1)
 
 space key, s : force stop
 
@@ -65,21 +59,17 @@ Communications Failed
 """
 
 def getKey():
-    if os.name == 'nt':
-      return msvcrt.getch()
-
     tty.setraw(sys.stdin.fileno())
     rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
     if rlist:
         key = sys.stdin.read(1)
     else:
         key = ''
-
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
 
-def vels(target_linear_vel, target_angular_vel):
-    return "currently:\tlinear vel %s\t angular vel %s " % (target_linear_vel,target_angular_vel)
+def vels(target_forward_vel, target_leftward_vel,target_angular_vel):
+    return "currently:\t forward x %s\t leftward y %s\t angular %s " % (target_forward_vel, target_leftward_vel, target_angular_vel)
 
 def makeSimpleProfile(output, input, slop):
     if input > output:
@@ -88,7 +78,6 @@ def makeSimpleProfile(output, input, slop):
         output = max( input, output - slop )
     else:
         output = input
-
     return output
 
 def constrain(input, low, high):
@@ -102,38 +91,25 @@ def constrain(input, low, high):
     return input
 
 def checkLinearLimitVelocity(vel):
-    if turtlebot3_model == "burger":
-      vel = constrain(vel, -BURGER_MAX_LIN_VEL, BURGER_MAX_LIN_VEL)
-    elif turtlebot3_model == "waffle" or turtlebot3_model == "waffle_pi":
-      vel = constrain(vel, -WAFFLE_MAX_LIN_VEL, WAFFLE_MAX_LIN_VEL)
-    else:
-      vel = constrain(vel, -BURGER_MAX_LIN_VEL, BURGER_MAX_LIN_VEL)
-
+    vel = constrain(vel, -MAX_LIN_VEL, MAX_LIN_VEL)
     return vel
 
 def checkAngularLimitVelocity(vel):
-    if turtlebot3_model == "burger":
-      vel = constrain(vel, -BURGER_MAX_ANG_VEL, BURGER_MAX_ANG_VEL)
-    elif turtlebot3_model == "waffle" or turtlebot3_model == "waffle_pi":
-      vel = constrain(vel, -WAFFLE_MAX_ANG_VEL, WAFFLE_MAX_ANG_VEL)
-    else:
-      vel = constrain(vel, -BURGER_MAX_ANG_VEL, BURGER_MAX_ANG_VEL)
-
+    vel = constrain(vel, -MAX_ANG_VEL, MAX_ANG_VEL)
     return vel
 
 if __name__=="__main__":
-    if os.name != 'nt':
-        settings = termios.tcgetattr(sys.stdin)
+    settings = termios.tcgetattr(sys.stdin)
 
-    rospy.init_node('turtlebot3_teleop')
+    rospy.init_node('keybo')
     pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
 
-    turtlebot3_model = rospy.get_param("model", "burger")
 
-    status = 0
-    target_linear_vel   = 0.0
+    target_forward_vel   = 0.0
+    target_leftward_vel   = 0.0
     target_angular_vel  = 0.0
-    control_linear_vel  = 0.0
+    control_forward_vel  = 0.0
+    control_leftward_vel  = 0.0
     control_angular_vel = 0.0
 
     try:
@@ -141,42 +117,43 @@ if __name__=="__main__":
         while(1):
             key = getKey()
             if key == 'w' :
-                target_linear_vel = checkLinearLimitVelocity(target_linear_vel + LIN_VEL_STEP_SIZE)
-                status = status + 1
-                print(vels(target_linear_vel,target_angular_vel))
+                target_forward_vel = checkLinearLimitVelocity(target_forward_vel + LIN_VEL_STEP_SIZE)
+                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
             elif key == 'x' :
-                target_linear_vel = checkLinearLimitVelocity(target_linear_vel - LIN_VEL_STEP_SIZE)
-                status = status + 1
-                print(vels(target_linear_vel,target_angular_vel))
+                target_forward_vel = checkLinearLimitVelocity(target_forward_vel - LIN_VEL_STEP_SIZE)
+                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
             elif key == 'a' :
-                target_angular_vel = checkAngularLimitVelocity(target_angular_vel + ANG_VEL_STEP_SIZE)
-                status = status + 1
-                print(vels(target_linear_vel,target_angular_vel))
+                target_leftward_vel = checkLinearLimitVelocity(target_leftward_vel + LIN_VEL_STEP_SIZE)
+                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
             elif key == 'd' :
+                target_leftward_vel = checkLinearLimitVelocity(target_leftward_vel - LIN_VEL_STEP_SIZE)
+                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
+            elif key == 'q':
+                target_angular_vel = checkAngularLimitVelocity(target_angular_vel + ANG_VEL_STEP_SIZE)
+                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
+            elif key == 'e':
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel - ANG_VEL_STEP_SIZE)
-                status = status + 1
-                print(vels(target_linear_vel,target_angular_vel))
+                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
             elif key == ' ' or key == 's' :
-                target_linear_vel   = 0.0
-                control_linear_vel  = 0.0
+                target_forward_vel   = 0.0
+                target_leftward_vel   = 0.0
                 target_angular_vel  = 0.0
+                control_forward_vel  = 0.0
+                control_leftward_vel  = 0.0
                 control_angular_vel = 0.0
-                print(vels(target_linear_vel, target_angular_vel))
+                print(vels(target_forward_vel,target_leftward_vel,target_angular_vel))
             else:
                 if (key == '\x03'):
                     break
 
-            if status == 20 :
-                print(msg)
-                status = 0
-
             twist = Twist()
 
-            control_linear_vel = makeSimpleProfile(control_linear_vel, target_linear_vel, (LIN_VEL_STEP_SIZE/2.0))
-            twist.linear.x = control_linear_vel; twist.angular.z = 0.0; twist.linear.z = 0.0
+            control_forward_vel = makeSimpleProfile(control_forward_vel, target_forward_vel, (LIN_VEL_STEP_SIZE/2.0))
+            control_leftward_vel = makeSimpleProfile(control_leftward_vel, target_leftward_vel, (LIN_VEL_STEP_SIZE/2.0))
+            twist.linear.x = control_forward_vel; twist.linear.y = control_leftward_vel; twist.linear.z = 0.0
 
             control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0))
-            twist.angular.x = 0.0; twist.angular.y = 0.0; twist.linear.y = control_angular_vel
+            twist.angular.x = 0.0; twist.angular.y = 0.0;  twist.angular.z = control_angular_vel
 
             pub.publish(twist)
 
@@ -189,5 +166,4 @@ if __name__=="__main__":
         twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = 0.0
         pub.publish(twist)
 
-    if os.name != 'nt':
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
