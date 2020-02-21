@@ -12,12 +12,12 @@
 <img src="./gif/laser_slam.gif" width="640" height="368" /> 
 
 4. VIO 
-<img src="./gif/vins.gif" width="640" height="368" />  
+<img src="./gif/vio.gif" width="640" height="368" />  
 
 5. 运动规划
-<img src="./gif/motion_planning_demo_1.gif" width="640" height="368" />  
+<img src="./gif/motion_planning.gif" width="640" height="368" />  
   
-6. 多机协同
+1. 多机协同
 <img src="./gif/cooperation.gif" width="640" height="368" />  
 
 #### 软件架构
