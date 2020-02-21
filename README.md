@@ -17,7 +17,7 @@
 5. 运动规划
 <img src="./gif/motion_planning.gif" width="640" height="368" />  
   
-1. 多机协同
+6. 多机协同
 <img src="./gif/cooperation.gif" width="640" height="368" />  
 
 #### 软件架构
