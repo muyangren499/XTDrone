@@ -4,7 +4,7 @@ from mavros_msgs.msg import GlobalPositionTarget, State, PositionTarget
 from mavros_msgs.srv import CommandBool, CommandTOL, SetMode
 from geometry_msgs.msg import PoseStamped, TwistStamped, Pose, Twist
 from sensor_msgs.msg import Imu, NavSatFix
-from std_msgs.msg import Float32, Float64, String
+from std_msgs.msg import String
 import time
 from pyquaternion import Quaternion
 import math
@@ -28,7 +28,7 @@ class PX4Communication:
         self.arm_state = False
         self.offboard_state = False
         self.flag = 0
-        self.state = None
+        self.flight_mode = None
 
         '''
         ros subscribers
@@ -60,33 +60,19 @@ class PX4Communication:
 
     def start(self):
         rospy.init_node("px4_communication")
-        self.takeoff()
-        for i in range(20):     
-            self.pose_target_pub.publish(self.target_pose)
-            self.arm_state = self.arm()
-            self.offboard_state = self.offboard()
-            time.sleep(0.2)
-
-        if self.takeoff_detection():
-            print("Vehicle Took Off!")
-
-        else:
-            print("Vehicle Took Off Failed!")
-            return
-
         '''
         main ROS thread
         '''
-        while self.arm_state and self.offboard_state and (rospy.is_shutdown() is False):
+        while(True):
             if(self.flag==0):
                 self.pose_target_pub.publish(self.target_pose)
             else:
                 self.twist_target_pub.publish(self.target_vel)
-            if (self.state is "LAND") and (self.local_pose.pose.position.z < 0.15):
+            if (self.flight_mode is "LAND") and (self.local_pose.pose.position.z < 0.15):
 
                 if(self.disarm()):
 
-                    self.state = "DISARMED"
+                    self.flight_mode = "DISARMED"
 
             time.sleep(0.1)
 
@@ -125,17 +111,16 @@ class PX4Communication:
         self.target_vel.twist = msg
 
     def cmd_callback(self, msg):
-        if msg == 'LAND':
-            self.land()
-        if msg == 'RETURN':
-            self.return_home()
-
-    def takeoff(self):
-        self.target_pose.pose.position.x = self.local_pose.pose.position.x
-        self.target_pose.pose.position.y = self.local_pose.pose.position.y
-        self.target_pose.pose.position.z = self.takeoff_height
-        target_yaw = self.current_heading
-        self.cmd_yaw(target_yaw)
+        if msg.data == '':
+            return
+        elif msg.data == 'ARM':
+            self.arm_state =self.arm()
+        elif msg.data == 'DISARM':
+            self.arm_state =self.disarm()
+        else:
+            self.flight_mode = msg.data
+            self.flight_mode_switch()
+            
 
     def q2yaw(self, q):
         if isinstance(q, Quaternion):
@@ -172,30 +157,16 @@ class PX4Communication:
             print("Vehicle Disarming Failed!")
             return False
 
-
-    def offboard(self):
-        if self.flightModeService(custom_mode='OFFBOARD'):
+    def flight_mode_switch(self):
+        if self.flightModeService(custom_mode=self.flight_mode):
+            print(self.flight_mode)
             return True
         else:
-            print("Vechile Offboard Failed")
-            return False
-
-    def land(self):
-        if self.flightModeService(custom_mode='LAND'):
-            return True
-        else:
-            print("Vechile Land Failed")
-            return False
-
-    def return_home(self):
-        if self.flightModeService(custom_mode='RETRUN'):
-            return True
-        else:
-            print("Vechile Return failed")
+            print(self.flight_mode+"Failed")
             return False
 
     def takeoff_detection(self):
-        if self.local_pose.pose.position.z > 0.1 and self.offboard_state and self.arm_state:
+        if self.local_pose.pose.position.z > 0.3 and self.offboard_state and self.arm_state:
             return True
         else:
             return False

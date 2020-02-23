@@ -1,6 +1,6 @@
 %YAML:1.0
 #common parameters
-image_topic: "/gi/simulation/left/image_raw"
+image_topic: "/stereo/camera/left/image_raw"
 imu_topic: "/mavros/imu/data"
 output_path: "/dev/null"
 

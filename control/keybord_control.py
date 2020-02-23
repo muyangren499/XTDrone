@@ -2,8 +2,9 @@ import rospy
 from geometry_msgs.msg import Twist
 import sys, select, os
 import tty, termios
+from std_msgs.msg import String
 
-MAX_LIN_VEL = 0.2
+MAX_LIN_VEL = 1
 MAX_ANG_VEL = 0.1
 LIN_VEL_STEP_SIZE = 0.02
 ANG_VEL_STEP_SIZE = 0.01
@@ -12,15 +13,18 @@ msg = """
 Control Your XTDrone!
 ---------------------------
 Moving around:
-        w               i
-   a    s    d     j    k    l
-        x               ,
+        w       r    t   y        i
+   a    s    d               j    k    l
+        x       v    b   n        ,
 
 w/x : increase/decrease forward velocity (-0.2~0.2)
 a/d : increase/decrease leftward velocity (-0.2~0.2)
 i/, : increase/decrease upward velocity (-0.2~0.2)
 j/l : increase/decrease angular velocity (-0.1~0.1)
-
+r   : return home
+t/y : arm/disarm
+v/n : takeoff/land
+b   : offboard
 s or k : force stop
 
 CTRL-C to quit
@@ -74,8 +78,9 @@ if __name__=="__main__":
     settings = termios.tcgetattr(sys.stdin)
 
     rospy.init_node('keyboard_control')
-    pub = rospy.Publisher('/xtdrone/cmd_vel_flu', Twist, queue_size=10)
-
+    cmd_vel_flu_pub = rospy.Publisher('/xtdrone/cmd_vel_flu', Twist, queue_size=10)
+    cmd_pub = rospy.Publisher('/xtdrone/cmd',String,queue_size=10)
+    cmd = String()
 
     target_forward_vel   = 0.0
     target_leftward_vel   = 0.0
@@ -85,6 +90,8 @@ if __name__=="__main__":
     control_leftward_vel  = 0.0
     control_upward_vel  = 0.0
     control_angular_vel = 0.0
+
+    count = 0
 
     try:
         print(msg)
@@ -114,6 +121,24 @@ if __name__=="__main__":
             elif key == 'l':
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel - ANG_VEL_STEP_SIZE)
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
+            elif key == 'r':
+                cmd = 'AUTO.RTL'
+                print('Returning home')
+            elif key == 't':
+                cmd = 'ARM'
+                print('Arming')
+            elif key == 'y':
+                cmd = 'DISARM'
+                print('Disarming')
+            elif key == 'v':
+                cmd = 'AUTO.TAKEOFF'
+                print('Takeoff')
+            elif key == 'b':
+                cmd = 'OFFBOARD'
+                print('Landing')
+            elif key == 'n':
+                cmd = 'AUTO.LAND'
+                print('Landing')
             elif key == 's' or key == 'k' :
                 target_forward_vel   = 0.0
                 target_leftward_vel   = 0.0
@@ -138,8 +163,13 @@ if __name__=="__main__":
             control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0))
             twist.angular.x = 0.0; twist.angular.y = 0.0;  twist.angular.z = control_angular_vel
 
-            pub.publish(twist)
-
+            cmd_vel_flu_pub.publish(twist)
+            cmd_pub.publish(cmd)
+            cmd = ''
+            count = count + 1
+            if(count>20):
+                print(msg)
+                count = 0
     except:
         print(e)
 
@@ -147,6 +177,7 @@ if __name__=="__main__":
         twist = Twist()
         twist.linear.x = 0.0; twist.linear.y = 0.0; twist.linear.z = 0.0
         twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = 0.0
-        pub.publish(twist)
+        cmd_vel_flu_pub.publish(twist)
+        cmd_pub.publish(cmd)
 
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
