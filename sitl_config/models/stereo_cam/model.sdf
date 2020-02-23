@@ -26,8 +26,9 @@
           <pose>0 0.2 0 0 0 0</pose>
           <horizontal_fov>1.047</horizontal_fov>
           <image>
-            <width>320</width>
-            <height>240</height>
+            <width>752</width>
+            <height>480</height>
+	    <format>R8G8B8</format>
           </image>
           <clip>
             <near>0.1</near>
@@ -38,8 +39,9 @@
           <pose>0 -0.2 0 0 0 0</pose>
           <horizontal_fov>1.047</horizontal_fov>
           <image>
-            <width>320</width>
-            <height>240</height>
+            <width>752</width>
+            <height>480</height>
+	    <format>R8G8B8</format>
           </image>
           <clip>
             <near>0.1</near>
