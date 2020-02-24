@@ -8,8 +8,6 @@ from std_msgs.msg import String
 import time
 from pyquaternion import Quaternion
 import math
-import threading
-
 
 class PX4Communication:
 
@@ -119,8 +117,8 @@ class PX4Communication:
             print('Armed'+str(self.arm_state))
         elif msg.data == 'DISARM':
             disarm_state =self.disarm()
-            if disarm_state
-            self.arm_state = False
+            if disarm_state:
+                self.arm_state = False
             print('Armed'+str(self.arm_state))
         else:
             self.flight_mode = msg.data
@@ -179,5 +177,5 @@ class PX4Communication:
 
 if __name__ == '__main__':
 
-    con = PX4Communication()
-    con.start()
+    px4_com = PX4Communication()
+    px4_com.start()

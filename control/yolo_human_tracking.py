@@ -28,7 +28,7 @@ def darknet_callback(data):
             twist.angular.z = 0.0
             pub.publish(twist)
 
-Kp_linear=0.005
+Kp_linear=0.05
 Kp_angular=0.2/math.pi
 x_center=752/2
 y_center=480/2
