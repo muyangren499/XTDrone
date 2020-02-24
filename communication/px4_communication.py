@@ -60,10 +60,11 @@ class PX4Communication:
 
     def start(self):
         rospy.init_node("px4_communication")
+        rate = rospy.Rate(100)
         '''
         main ROS thread
         '''
-        while(True):
+        while(rospy.is_shutdown):
             if(self.flag==0):
                 self.pose_target_pub.publish(self.target_pose)
             else:
@@ -74,7 +75,7 @@ class PX4Communication:
 
                     self.flight_mode = "DISARMED"
 
-            time.sleep(0.1)
+            rate.sleep()
 
     def local_pose_callback(self, msg):
         self.local_pose = msg
@@ -115,8 +116,12 @@ class PX4Communication:
             return
         elif msg.data == 'ARM':
             self.arm_state =self.arm()
+            print('Armed'+str(self.arm_state))
         elif msg.data == 'DISARM':
-            self.arm_state =self.disarm()
+            disarm_state =self.disarm()
+            if disarm_state
+            self.arm_state = False
+            print('Armed'+str(self.arm_state))
         else:
             self.flight_mode = msg.data
             self.flight_mode_switch()
@@ -176,4 +181,3 @@ if __name__ == '__main__':
 
     con = PX4Communication()
     con.start()
-    time.sleep(2)

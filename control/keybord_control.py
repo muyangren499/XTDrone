@@ -99,45 +99,59 @@ if __name__=="__main__":
             key = getKey()
             if key == 'w' :
                 target_forward_vel = checkLinearLimitVelocity(target_forward_vel + LIN_VEL_STEP_SIZE)
+                print(msg)
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'x' :
                 target_forward_vel = checkLinearLimitVelocity(target_forward_vel - LIN_VEL_STEP_SIZE)
+                print(msg)
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'a' :
                 target_leftward_vel = checkLinearLimitVelocity(target_leftward_vel + LIN_VEL_STEP_SIZE)
+                print(msg)
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'd' :
                 target_leftward_vel = checkLinearLimitVelocity(target_leftward_vel - LIN_VEL_STEP_SIZE)
+                print(msg)
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'i' :
                 target_upward_vel = checkLinearLimitVelocity(target_upward_vel + LIN_VEL_STEP_SIZE)
+                print(msg)
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == ',' :
                 target_upward_vel = checkLinearLimitVelocity(target_upward_vel - LIN_VEL_STEP_SIZE)
+                print(msg)
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'j':
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel + ANG_VEL_STEP_SIZE)
+                print(msg)
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'l':
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel - ANG_VEL_STEP_SIZE)
+                print(msg)
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'r':
                 cmd = 'AUTO.RTL'
+                print(msg)
                 print('Returning home')
             elif key == 't':
                 cmd = 'ARM'
+                print(msg)
                 print('Arming')
             elif key == 'y':
                 cmd = 'DISARM'
+                print(msg)
                 print('Disarming')
             elif key == 'v':
                 cmd = 'AUTO.TAKEOFF'
+                print(msg)
                 print('Takeoff')
             elif key == 'b':
                 cmd = 'OFFBOARD'
-                print('Landing')
+                print(msg)
+                print('Offboard')
             elif key == 'n':
                 cmd = 'AUTO.LAND'
+                print(msg)
                 print('Landing')
             elif key == 's' or key == 'k' :
                 target_forward_vel   = 0.0
@@ -148,6 +162,7 @@ if __name__=="__main__":
                 control_leftward_vel  = 0.0
                 control_upward_vel  = 0.0
                 control_angular_vel = 0.0
+                print(msg)
                 print(vels(target_forward_vel,-target_leftward_vel,target_upward_vel,target_angular_vel))
             else:
                 if (key == '\x03'):
@@ -166,10 +181,6 @@ if __name__=="__main__":
             cmd_vel_flu_pub.publish(twist)
             cmd_pub.publish(cmd)
             cmd = ''
-            count = count + 1
-            if(count>20):
-                print(msg)
-                count = 0
     except:
         print(e)
 
