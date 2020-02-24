@@ -78,7 +78,7 @@ if __name__=="__main__":
 
     settings = termios.tcgetattr(sys.stdin)
 
-    uav_num = 12
+    uav_num = 10
     rospy.init_node('keyboard_control')
     multi_cmd_vel_flu_pub = [None]*uav_num
     multi_cmd_pub = [None]*uav_num
