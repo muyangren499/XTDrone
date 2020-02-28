@@ -1,7 +1,9 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 import rospy
 from geometry_msgs.msg import Twist,Pose,PoseStamped,TwistStamped
-Kp = 0.01
-uav_num = 5
+Kp = 0.08
+uav_num = 6
 vision_pose = [PoseStamped()]*(uav_num+1)
 relative_pose = [PoseStamped()]*(uav_num+1)
 follower_vel_flu_pub = [None]*(uav_num+1)
@@ -17,12 +19,12 @@ formation.append(  [[-2,-2],[0,-2],[2,-2],[-1,-1],[0,0],[1,-1]] )#Trianglar form
                                                               #     i
                                                               #    i  i
                                                               #   i  i  i
-formation.append( [[0,-2],[0,-1],[0,-3],[-1,0],[0,0],[1,0]]  )  #'T' formation
+formation.append( [[0,-4],[0,-2],[0,-6],[-2,0],[0,0],[2,0]]  )  #'T' formation
                                                               #    i i i
                                                               #      i
                                                               #      i
                                                               #      i
-formation_id = 0
+formation_id = 2
 
 
 def leader_cmd_vel_callback(msg):
@@ -68,4 +70,6 @@ while(1):
             follower_cmd_vel[uav_id].linear.y = (leader_cmd_vel.twist.linear.y+Kp*(formation[formation_id][i][1]- relative_pose[uav_id].pose.position.y) )
             follower_cmd_vel[uav_id].linear.z = leader_cmd_vel.twist.linear.z
             follower_cmd_vel[uav_id].angular.x = 0.0; follower_cmd_vel[uav_id].angular.y = 0.0;  follower_cmd_vel[uav_id].angular.z = 0.0
+
+            print('uavid：%f  pose-x：%f  pose-y：%f vel-x：%f vel-y：%f \n'%(uav_id,relative_pose[uav_id].pose.position.x,relative_pose[uav_id].pose.position.y,follower_cmd_vel[uav_id].linear.x,follower_cmd_vel[uav_id].linear.y))
             follower_vel_flu_pub[uav_id].publish(follower_cmd_vel[uav_id])
