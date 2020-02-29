@@ -12,7 +12,7 @@ relative_pose = [None]*(uav_num+1)
 follower_vel_enu_pub = [None]*(uav_num+1)
 relative_pose_pub = [None]*(uav_num+1)
 follower_cmd_vel = [None]*(uav_num+1)
-leader_cmd_vel = TwistStamped()
+leader_cmd_vel = Twist()
 
 for i in range(uav_num):
     vision_pose[i+1]=PoseStamped()
@@ -65,9 +65,9 @@ for i in range(uav_num):
     uav_id = i+1
     rospy.Subscriber("/uav"+str(uav_id)+"/mavros/vision_pose/pose", PoseStamped , vision_pose_callback,uav_id)
 
-leader_cmd_vel_sub = rospy.Subscriber("/uav"+str(leader_id)+"/mavros/setpoint_velocity/cmd_vel", TwistStamped, leader_cmd_vel_callback)
-formation_switch_sub = rospy.Subscriber("/xtdrone"+"/uav"+str(leader_id)+"/cmd",String, cmd_callback)
-
+leader_cmd_vel_sub = rospy.Subscriber("/xtdrone/leader_cmd_vel", Twist, leader_cmd_vel_callback)
+formation_switch_sub = rospy.Subscriber("/xtdrone/leader_cmd",String, cmd_callback)
+leader_vel_enu_pub =  rospy.Publisher('/xtdrone/uav'+str(leader_id)+'/cmd_vel_enu', Twist, queue_size=10)
 for i in range(uav_num):
     uav_id = i+1
     if uav_id != leader_id:
@@ -79,9 +79,10 @@ while(1):
     for i in range(uav_num):
         uav_id = i+1
         if uav_id != leader_id:
-            follower_cmd_vel[uav_id].linear.x = (leader_cmd_vel.twist.linear.x+Kp*(formation[formation_id][i][0]- relative_pose[uav_id].pose.position.x) ) 
-            follower_cmd_vel[uav_id].linear.y = (leader_cmd_vel.twist.linear.y+Kp*(formation[formation_id][i][1]- relative_pose[uav_id].pose.position.y) )
-            follower_cmd_vel[uav_id].linear.z = leader_cmd_vel.twist.linear.z
+            follower_cmd_vel[uav_id].linear.x = (leader_cmd_vel.linear.x+Kp*(formation[formation_id][i][0]- relative_pose[uav_id].pose.position.x) ) 
+            follower_cmd_vel[uav_id].linear.y = (leader_cmd_vel.linear.y+Kp*(formation[formation_id][i][1]- relative_pose[uav_id].pose.position.y) )
+            follower_cmd_vel[uav_id].linear.z = leader_cmd_vel.linear.z
             follower_cmd_vel[uav_id].angular.x = 0.0; follower_cmd_vel[uav_id].angular.y = 0.0;  follower_cmd_vel[uav_id].angular.z = 0.0
             follower_vel_enu_pub[uav_id].publish(follower_cmd_vel[uav_id])
+    leader_vel_enu_pub.publish(leader_cmd_vel)
     rate.sleep()

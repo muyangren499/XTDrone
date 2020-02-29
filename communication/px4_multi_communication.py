@@ -30,6 +30,7 @@ class PX4Communication:
         self.offboard_state = False
         self.flag = 0
         self.flight_mode = None
+        self.mission = None
 
         '''
         ros subscribers
@@ -56,7 +57,7 @@ class PX4Communication:
         self.flightModeService = rospy.ServiceProxy("/uav"+str(self.id)+"/mavros/set_mode", SetMode)
 
 
-        print("PX4 Communication Initialized!")
+        print("UAV"+str(self.id)+": "+"PX4 Communication Initialized!")
 
 
     def start(self):
@@ -115,15 +116,22 @@ class PX4Communication:
     def cmd_callback(self, msg):
         if msg.data == '':
             return
-        elif msg.data == 'ARM':
+
+        elif msg.data == 'ARM' and self.arm_state == False:
             self.arm_state =self.arm()
-            print('Armed'+str(self.arm_state))
-        elif msg.data == 'DISARM':
+            print("UAV"+str(self.id)+": "+'Armed'+str(self.arm_state))
+
+        elif msg.data == 'DISARM' and self.arm_state == True:
             disarm_state =self.disarm()
             if disarm_state:
                 self.arm_state = False
-            print('Armed'+str(self.arm_state))
-        else:
+            print("UAV"+str(self.id)+": "+'Armed'+str(self.arm_state))
+
+        elif msg.data[:-1] == "mission" and not msg.data == self.mission:
+            self.mission = msg.data
+            print("UAV"+str(self.id)+": "+msg.data)
+
+        elif not msg.data == self.flight_mode:
             self.flight_mode = msg.data
             self.flight_mode_switch()
             
@@ -153,22 +161,22 @@ class PX4Communication:
         if self.armService(True):
             return True
         else:
-            print("Vehicle Arming Failed!")
+            print("UAV"+str(self.id)+": "+"Vehicle Arming Failed!")
             return False
 
     def disarm(self):
         if self.armService(False):
             return True
         else:
-            print("Vehicle Disarming Failed!")
+            print("UAV"+str(self.id)+": "+"Vehicle Disarming Failed!")
             return False
 
     def flight_mode_switch(self):
         if self.flightModeService(custom_mode=self.flight_mode):
-            print(self.flight_mode)
+            print("UAV"+str(self.id)+": "+self.flight_mode)
             return True
         else:
-            print(self.flight_mode+"Failed")
+            print("UAV"+str(self.id)+": "+self.flight_mode+"Failed")
             return False
 
     def takeoff_detection(self):
