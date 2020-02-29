@@ -178,7 +178,7 @@ class PX4Communication:
 
 
 if __name__ == '__main__':
-    uav_num = 6
+    uav_num = 10
     for i in range(uav_num):
         px4_com = PX4Communication(i+1)
         p = Process(target=px4_com.start)
