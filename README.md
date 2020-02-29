@@ -21,8 +21,8 @@
 <img src="./gif/cooperation.gif" width="640" height="368" />  
 
 #### 软件架构
-- 通信:PX4与ROS之间的通信封装进Python类
-- 控制：键盘控制无人机速度和偏航转速
+- 通信: PX4与ROS之间的通信封装进Python类, 多机通信启动多进程
+- 控制：键盘切换无人机飞行模式，控制解锁上锁，调节速度和偏航转速
 - 感知
   1. 目标检测与追踪
        - YOLO
@@ -55,15 +55,7 @@
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
+见[XTDrone使用文档](https://www.yuque.com/qvdzhs/xtdrone_manual)
 
 #### 参与贡献
 

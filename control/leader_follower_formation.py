@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 import rospy
 from geometry_msgs.msg import Twist,Pose,PoseStamped,TwistStamped
 Kp = 0.1
@@ -23,12 +25,12 @@ formation.append(  [[-2,-2],[0,-2],[2,-2],[-1,-1],[0,0],[1,-1]] )#Trianglar form
                                                               #     i
                                                               #    i  i
                                                               #   i  i  i
-formation.append( [[0,-2],[0,-1],[0,-3],[-1,0],[0,0],[1,0]]  )  #'T' formation
+formation.append( [[0,-4],[0,-2],[0,-6],[-2,0],[0,0],[2,0]]  )  #'T' formation
                                                               #    i i i
                                                               #      i
                                                               #      i
                                                               #      i
-formation_id = 0
+formation_id = 2
 
 
 def leader_cmd_vel_callback(msg):

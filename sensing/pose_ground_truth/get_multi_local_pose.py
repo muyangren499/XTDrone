@@ -4,7 +4,7 @@ from geometry_msgs.msg import PoseStamped
 from pyquaternion import Quaternion
 import sys
 import tf
-uav_num = 12
+uav_num = 10
 
 def get_odom(id):
     try:
