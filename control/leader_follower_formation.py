@@ -22,6 +22,11 @@ for i in range(uav_num):
 #    uav_5 is the leader in the formation mission
 formation=[None]*10
 
+
+'''2x5 formation 0
+fflff
+fffff
+'''
 formation_temp = [None]*(uav_num+1)               
 for i in range(uav_num):                           
     if i+1 <= (uav_num/2):   
@@ -36,19 +41,30 @@ for i in range(uav_num):
             formation_temp[i+1] = Point( -2, (uav_num/2)-i+2 ) 
 formation[0] = formation_temp
 
-
-formation_temp = [None]*(uav_num+1)         #  2x5 formation
-for i in range(uav_num):                    #   
-    if (i+1)%2 == 1£º                       #  l f f f f 
-        formation_temp[i+1] = Point(0,i)    #  f
-    elif i+1 != uav_num:                    #  f   
-        formation_temp[i+1] = Point(-i,0)   #  f
-    else:                                   #  f       f
+''' 'L' formation  1
+lffff
+f
+f
+f
+f   f
+'''
+formation_temp = [None]*(uav_num+1)         
+for i in range(uav_num):                     
+    if (i+1)%2 == 1£º                       
+        formation_temp[i+1] = Point(0,i)    
+    elif i+1 != uav_num:                      
+        formation_temp[i+1] = Point(-i,0)   
+    else:                                   
         formation_temp[i+1] = Point(-4,4)
 formation[1] = formation_temp               
 
-
-formation_temp = [None]*(uav_num+1)         #  formation
+''' 'L' formation  2
+       l
+      f f
+     f f f
+    f f f f
+'''
+formation_temp = [None]*(uav_num+1)         
 formation_temp[1]=Point(0,0)
 formation_temp[2]=Point(-2,-2)£»formation_temp[3]=Point(-2,2)
 formation_temp[4]=Point(-4,-4)£»formation_temp[5]=Point(-4,0)£»formation_temp[7]=Point(-4,4)
