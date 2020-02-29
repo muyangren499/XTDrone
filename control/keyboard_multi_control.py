@@ -4,29 +4,33 @@ import sys, select, os
 import tty, termios
 from std_msgs.msg import String
 
+
 MAX_LIN_VEL = 1
 MAX_ANG_VEL = 0.1
 LIN_VEL_STEP_SIZE = 0.02
 ANG_VEL_STEP_SIZE = 0.01
 
+cmd_vel_mask = False
+
 msg = """
 Control Your XTDrone!
 ---------------------------
-Moving around:
+   1   2   3   4   5   6   7   8   9   0
         w       r    t   y        i
    a    s    d               j    k    l
         x       v    b   n        ,
 
-w/x : increase/decrease forward velocity (-0.2~0.2)
-a/d : increase/decrease leftward velocity (-0.2~0.2)
-i/, : increase/decrease upward velocity (-0.2~0.2)
+w/x : increase/decrease forward velocity (-1~1)
+a/d : increase/decrease leftward velocity (-1~1)
+i/, : increase/decrease upward velocity (-1~1)
 j/l : increase/decrease angular velocity (-0.1~0.1)
 r   : return home
 t/y : arm/disarm
 v/n : takeoff/land
 b   : offboard
-s or k : force stop
-
+s or k : hover and remove the mask of keyboard control
+0~9 : extendable mission(eg.different formation configuration)
+      this will mask the keyboard control
 CTRL-C to quit
 """
 
@@ -78,7 +82,7 @@ if __name__=="__main__":
 
     settings = termios.tcgetattr(sys.stdin)
 
-    uav_num = 10
+    uav_num = 6
     rospy.init_node('keyboard_control')
     multi_cmd_vel_flu_pub = [None]*uav_num
     multi_cmd_pub = [None]*uav_num
@@ -162,6 +166,7 @@ if __name__=="__main__":
                 print(msg)
                 print('Landing')
             elif key == 's' or key == 'k' :
+                cmd_vel_mask = False
                 target_forward_vel   = 0.0
                 target_leftward_vel   = 0.0
                 target_upward_vel   = 0.0
@@ -173,6 +178,12 @@ if __name__=="__main__":
                 print(msg)
                 print(vels(target_forward_vel,-target_leftward_vel,target_upward_vel,target_angular_vel))
             else:
+                for i in range(10):
+                    if key == str(i):
+                        cmd = 'mission'+key
+                        print(msg)
+                        print(cmd)
+                        cmd_vel_mask = True
                 if (key == '\x03'):
                     break
 
@@ -186,7 +197,8 @@ if __name__=="__main__":
             twist.angular.x = 0.0; twist.angular.y = 0.0;  twist.angular.z = control_angular_vel
 
             for i in range(uav_num):
-                multi_cmd_vel_flu_pub[i].publish(twist)
+                if not cmd_vel_mask:
+                    multi_cmd_vel_flu_pub[i].publish(twist)
                 multi_cmd_pub[i].publish(cmd)
             cmd = ''
     except:

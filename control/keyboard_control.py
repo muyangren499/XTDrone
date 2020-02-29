@@ -12,21 +12,21 @@ ANG_VEL_STEP_SIZE = 0.01
 msg = """
 Control Your XTDrone!
 ---------------------------
-Moving around:
+    1   2   3   4   5   6   7   8   9   0
         w       r    t   y        i
    a    s    d               j    k    l
         x       v    b   n        ,
 
-w/x : increase/decrease forward velocity (-0.2~0.2)
-a/d : increase/decrease leftward velocity (-0.2~0.2)
-i/, : increase/decrease upward velocity (-0.2~0.2)
+w/x : increase/decrease forward velocity (-1~1)
+a/d : increase/decrease leftward velocity (-1~1)
+i/, : increase/decrease upward velocity (-1~1)
 j/l : increase/decrease angular velocity (-0.1~0.1)
 r   : return home
 t/y : arm/disarm
 v/n : takeoff/land
 b   : offboard
-s or k : force stop
-
+s or k : hover
+0~9 : extendable mission
 CTRL-C to quit
 """
 

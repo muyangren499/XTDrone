@@ -9,6 +9,7 @@ import time
 from pyquaternion import Quaternion
 import math
 from multiprocessing import Process
+import sys
 
 class PX4Communication:
 
@@ -178,7 +179,7 @@ class PX4Communication:
 
 
 if __name__ == '__main__':
-    uav_num = 10
+    uav_num = int(sys.argv[1])
     for i in range(uav_num):
         px4_com = PX4Communication(i+1)
         p = Process(target=px4_com.start)

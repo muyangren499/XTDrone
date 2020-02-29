@@ -1,5 +1,5 @@
 #The number of drones
-uav_num=10
+uav_num=6
 ekf_dir="./ekf2_config/"
 launch_dir="./launch/"
 with open('launch_head','r') as f:
@@ -55,7 +55,7 @@ for num in range(1,uav_num+1):
         f.write("replay trystart\n")
         print iris_name," down"
 
-with open('../launch/multi_uav.launch','w') as f:
+with open('./launch/multi_uav.launch','w') as f:
     f.write(launch_head)
     for num in range(1,uav_num+1):
         mavlink_1=34570-1+num*2

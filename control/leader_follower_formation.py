@@ -46,49 +46,16 @@ def calculate_relative_pose(uav_id):
 vision_pose_callback = [None]*(uav_num+1)
 
 rospy.init_node('formation_control')
-'''
-for i in range(uav_num):
-    uav_id = i+1
-    def func(msg):
-        global vision_pose
-        vision_pose[uav_id] = msg
-        calculate_relative_pose(uav_id)
-    vision_pose_callback[uav_id] = func
-'''
-def func1(msg):
-    vision_pose[1]=msg
-    calculate_relative_pose(1)
-vision_pose_callback[1] = func1
 
-def func2(msg):
-    vision_pose[2]=msg
-    calculate_relative_pose(2)
-vision_pose_callback[2] = func2
 
-def func3(msg):
-    vision_pose[3]=msg
-    calculate_relative_pose(3)
-vision_pose_callback[3] = func3
-
-def func4(msg):
-    vision_pose[4]=msg
-    calculate_relative_pose(4)
-vision_pose_callback[4] = func4
-
-def func5(msg):
-    vision_pose[5]=msg
-    calculate_relative_pose(5)
-vision_pose_callback[5] = func5
-
-def func6(msg):
-    vision_pose[6]=msg
-    calculate_relative_pose(6)
-vision_pose_callback[6] = func6
-
+def vision_pose_callback(msg,id):
+    global vision_pose
+    vision_pose[id] = msg
+    calculate_relative_pose(id)
 
 for i in range(uav_num):
     uav_id = i+1
-    rospy.Subscriber("/uav"+str(uav_id)+"/mavros/vision_pose/pose", PoseStamped , vision_pose_callback[uav_id] )
+    rospy.Subscriber("/uav"+str(uav_id)+"/mavros/vision_pose/pose", PoseStamped , vision_pose_callback,uav_id)
 
 leader_cmd_vel_sub = rospy.Subscriber("/uav"+str(leader_id)+"/mavros/setpoint_velocity/cmd_vel", TwistStamped, leader_cmd_vel_callback)
 
@@ -98,13 +65,15 @@ for i in range(uav_num):
     if uav_id != leader_id:
         follower_vel_enu_pub[i+1] = rospy.Publisher(
          '/xtdrone/uav'+str(i+1)+'/cmd_vel_enu', Twist, queue_size=10)
-
-while(1):
-    for i in range(uav_num):
-        uav_id = i+1
-        if uav_id != leader_id:
-            follower_cmd_vel[uav_id].linear.x = (leader_cmd_vel.twist.linear.x+Kp*(formation[formation_id][i][0]- relative_pose[uav_id].pose.position.x) ) 
-            follower_cmd_vel[uav_id].linear.y = (leader_cmd_vel.twist.linear.y+Kp*(formation[formation_id][i][1]- relative_pose[uav_id].pose.position.y) )
-            follower_cmd_vel[uav_id].linear.z = leader_cmd_vel.twist.linear.z
-            follower_cmd_vel[uav_id].angular.x = 0.0; follower_cmd_vel[uav_id].angular.y = 0.0;  follower_cmd_vel[uav_id].angular.z = 0.0
-            follower_vel_enu_pub[uav_id].publish(follower_cmd_vel[uav_id])
+try:
+    while(1):
+        for i in range(uav_num):
+            uav_id = i+1
+            if uav_id != leader_id:
+                follower_cmd_vel[uav_id].linear.x = (leader_cmd_vel.twist.linear.x+Kp*(formation[formation_id][i][0]- relative_pose[uav_id].pose.position.x) ) 
+                follower_cmd_vel[uav_id].linear.y = (leader_cmd_vel.twist.linear.y+Kp*(formation[formation_id][i][1]- relative_pose[uav_id].pose.position.y) )
+                follower_cmd_vel[uav_id].linear.z = leader_cmd_vel.twist.linear.z
+                follower_cmd_vel[uav_id].angular.x = 0.0; follower_cmd_vel[uav_id].angular.y = 0.0;  follower_cmd_vel[uav_id].angular.z = 0.0
+                follower_vel_enu_pub[uav_id].publish(follower_cmd_vel[uav_id])
+except KeyboardInterrupt:
+    pass
