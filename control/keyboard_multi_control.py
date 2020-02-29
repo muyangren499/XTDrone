@@ -11,13 +11,15 @@ LIN_VEL_STEP_SIZE = 0.02
 ANG_VEL_STEP_SIZE = 0.01
 
 cmd_vel_mask = False
+ctrl_leader = False
 
-msg = """
+msg2all = """
 Control Your XTDrone!
+To all drones  (press g to control the leader)
 ---------------------------
    1   2   3   4   5   6   7   8   9   0
         w       r    t   y        i
-   a    s    d               j    k    l
+   a    s    d       g       j    k    l
         x       v    b   n        ,
 
 w/x : increase/decrease forward velocity (-1~1)
@@ -31,6 +33,31 @@ b   : offboard
 s or k : hover and remove the mask of keyboard control
 0~9 : extendable mission(eg.different formation configuration)
       this will mask the keyboard control
+g   : control the leader
+CTRL-C to quit
+"""
+
+msg2leader = """
+Control Your XTDrone!
+To the leader  (press g to control all drones)
+---------------------------
+   1   2   3   4   5   6   7   8   9   0
+        w       r    t   y        i
+   a    s    d       g       j    k    l
+        x       v    b   n        ,
+
+w/x : increase/decrease forward velocity (-1~1)
+a/d : increase/decrease leftward velocity (-1~1)
+i/, : increase/decrease upward velocity (-1~1)
+j/l : increase/decrease angular velocity (-0.1~0.1)
+r   : return home
+t/y : arm/disarm
+v/n : takeoff/land
+b   : offboard
+s or k : hover and remove the mask of keyboard control
+0~9 : extendable mission(eg.different formation configuration)
+      this will mask the keyboard control
+g   : control all drones
 CTRL-C to quit
 """
 
@@ -48,6 +75,12 @@ def getKey():
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
 
+def print_msg():
+    if ctrl_leader:
+        print(msg2leader)
+    else:
+        print(msg2all)
+        
 def vels(target_forward_vel, target_leftward_vel, target_upward_vel,target_angular_vel):
     return "currently:\t forward x %s\t leftward y %s\t upward z %s\t angular %s " % (target_forward_vel, target_leftward_vel, target_upward_vel, target_angular_vel)
 
@@ -82,14 +115,15 @@ if __name__=="__main__":
 
     settings = termios.tcgetattr(sys.stdin)
 
-    uav_num = 6
+    uav_num = int(sys.argv[1])
     rospy.init_node('keyboard_control')
     multi_cmd_vel_flu_pub = [None]*uav_num
     multi_cmd_pub = [None]*uav_num
     for i in range(uav_num):
         multi_cmd_vel_flu_pub[i] = rospy.Publisher('/xtdrone/uav'+str(i+1)+'/cmd_vel_flu', Twist, queue_size=10)
         multi_cmd_pub[i] = rospy.Publisher('/xtdrone/uav'+str(i+1)+'/cmd',String,queue_size=10)
-    
+    leader_cmd_vel_pub = rospy.Publisher("/xtdrone/leader_cmd_vel", Twist, queue_size=10)
+    leader_cmd_pub = rospy.Publisher("/xtdrone/leader_cmd", String, queue_size=10)
     cmd= String()
     twist = Twist()    
 
@@ -106,65 +140,69 @@ if __name__=="__main__":
     count = 0
 
     try:
-        print(msg)
+        print_msg()
         while(1):
             key = getKey()
             if key == 'w' :
                 target_forward_vel = checkLinearLimitVelocity(target_forward_vel + LIN_VEL_STEP_SIZE)
-                print(msg)
+                print_msg()
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'x' :
                 target_forward_vel = checkLinearLimitVelocity(target_forward_vel - LIN_VEL_STEP_SIZE)
-                print(msg)
+                print_msg()
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'a' :
                 target_leftward_vel = checkLinearLimitVelocity(target_leftward_vel + LIN_VEL_STEP_SIZE)
-                print(msg)
+                print_msg()
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'd' :
                 target_leftward_vel = checkLinearLimitVelocity(target_leftward_vel - LIN_VEL_STEP_SIZE)
-                print(msg)
+                print_msg()
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'i' :
                 target_upward_vel = checkLinearLimitVelocity(target_upward_vel + LIN_VEL_STEP_SIZE)
-                print(msg)
+                print_msg()
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == ',' :
                 target_upward_vel = checkLinearLimitVelocity(target_upward_vel - LIN_VEL_STEP_SIZE)
-                print(msg)
+                print_msg()
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'j':
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel + ANG_VEL_STEP_SIZE)
-                print(msg)
+                print_msg()
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'l':
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel - ANG_VEL_STEP_SIZE)
-                print(msg)
+                print_msg()
                 print(vels(target_forward_vel,target_leftward_vel,target_upward_vel,target_angular_vel))
             elif key == 'r':
                 cmd = 'AUTO.RTL'
-                print(msg)
+                print_msg()
                 print('Returning home')
             elif key == 't':
                 cmd = 'ARM'
-                print(msg)
+                print_msg()
                 print('Arming')
             elif key == 'y':
                 cmd = 'DISARM'
-                print(msg)
+                print_msg()
                 print('Disarming')
             elif key == 'v':
                 cmd = 'AUTO.TAKEOFF'
-                print(msg)
+                print_msg()
                 print('Takeoff')
             elif key == 'b':
                 cmd = 'OFFBOARD'
-                print(msg)
+                print_msg()
                 print('Offboard')
             elif key == 'n':
                 cmd = 'AUTO.LAND'
-                print(msg)
+                print_msg()
                 print('Landing')
+            elif key == 'g':
+                ctrl_leader = not ctrl_leader
+                print_msg()
+                print("Control the leader")
             elif key == 's' or key == 'k' :
                 cmd_vel_mask = False
                 target_forward_vel   = 0.0
@@ -175,13 +213,13 @@ if __name__=="__main__":
                 control_leftward_vel  = 0.0
                 control_upward_vel  = 0.0
                 control_angular_vel = 0.0
-                print(msg)
+                print_msg()
                 print(vels(target_forward_vel,-target_leftward_vel,target_upward_vel,target_angular_vel))
             else:
                 for i in range(10):
                     if key == str(i):
                         cmd = 'mission'+key
-                        print(msg)
+                        print_msg()
                         print(cmd)
                         cmd_vel_mask = True
                 if (key == '\x03'):
@@ -197,9 +235,14 @@ if __name__=="__main__":
             twist.angular.x = 0.0; twist.angular.y = 0.0;  twist.angular.z = control_angular_vel
 
             for i in range(uav_num):
-                if not cmd_vel_mask:
-                    multi_cmd_vel_flu_pub[i].publish(twist)
-                multi_cmd_pub[i].publish(cmd)
+                if ctrl_leader:
+                    leader_cmd_vel_pub.publish(twist)
+                    leader_cmd_pub.publish(cmd)
+                else:
+                    if not cmd_vel_mask:
+                        multi_cmd_vel_flu_pub[i].publish(twist)    
+                    multi_cmd_pub[i].publish(cmd)
+                    
             cmd = ''
     except:
         print(e)

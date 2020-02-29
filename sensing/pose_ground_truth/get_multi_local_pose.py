@@ -22,6 +22,7 @@ if __name__ == '__main__':
         multi_pose_pub[i] = rospy.Publisher("/uav"+str(i+1)+"/mavros/vision_pose/pose", PoseStamped, queue_size=2)
         multi_local_pose[i] = PoseStamped()
         multi_local_pose[i].header.frame_id = 'map'
+        print('UAV'+str(i+1)+":OK")
     rate = rospy.Rate(100)
     while True:
         for i in range(uav_num):
