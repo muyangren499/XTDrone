@@ -29,13 +29,13 @@ fffff
 '''
 formation_temp = [None]*(uav_num+1)               
 for i in range(uav_num):                           
-    if i+1 <= (uav_num/2):   
-        if (i+1)%2 == 1£º                          
+    if i+1 <= (uav_num/2): 
+        if (i+1)%2 == 1:                         
             formation_temp[i+1] = Point(0,i)
         else:
-            formation_temp[i+1] = Point(0,-i-1)    #  2x5 formation
-    else:                                          #  f f l f f
-        if (i+1)%2 == 1£º                          #  f f f f f 
+            formation_temp[i+1] = Point(0,-i-1)    
+    else:                                         
+        if (i+1)%2 == 1:                          
             formation_temp[i+1] = Point( -2, 1+i-(uav_num/2) )
         else:
             formation_temp[i+1] = Point( -2, (uav_num/2)-i+2 ) 
@@ -50,7 +50,7 @@ f   f
 '''
 formation_temp = [None]*(uav_num+1)         
 for i in range(uav_num):                     
-    if (i+1)%2 == 1£º                       
+    if (i+1)%2 == 1:                       
         formation_temp[i+1] = Point(0,i)    
     elif i+1 != uav_num:                      
         formation_temp[i+1] = Point(-i,0)   
@@ -66,9 +66,9 @@ formation[1] = formation_temp
 '''
 formation_temp = [None]*(uav_num+1)         
 formation_temp[1]=Point(0,0)
-formation_temp[2]=Point(-2,-2)£»formation_temp[3]=Point(-2,2)
-formation_temp[4]=Point(-4,-4)£»formation_temp[5]=Point(-4,0)£»formation_temp[7]=Point(-4,4)
-formation_temp[10]=Point(-6,-6)£»formation_temp[8]=Point(-6,-2)£»formation_temp[6]=Point(-6,2)£»formation_temp[2]=Point(-6,6)
+formation_temp[2]=Point(-2,-2);formation_temp[3]=Point(-2,2)
+formation_temp[4]=Point(-4,-4);formation_temp[5]=Point(-4,0);formation_temp[7]=Point(-4,4)
+formation_temp[10]=Point(-6,-6);formation_temp[8]=Point(-6,-2);formation_temp[6]=Point(-6,2);formation_temp[2]=Point(-6,6)
 formation[2] = formation_temp      
 
     
