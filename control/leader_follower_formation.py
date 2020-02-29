@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import rospy
-from geometry_msgs.msg import Twist,Pose,PoseStamped,TwistStamped
+from geometry_msgs.msg import Twist,Pose,PoseStamped,TwistStamped,Point
 import sys 
 Kp = 0.1
 uav_num = int(sys.argv[1])
@@ -19,21 +19,28 @@ for i in range(uav_num):
     follower_cmd_vel[i+1]=Twist()
 
 #    uav_5 is the leader in the formation mission
-formation=[]
-formation.append( [[-1,-1],[0,-1],[1,-1],[-1,0],[0,0],[0,1]] )  #2x3 formation
-                                                              #  i i i 
-                                                              #  i i i
-formation.append(  [[-2,-2],[0,-2],[2,-2],[-1,-1],[0,0],[1,-1]] )#Trianglar formation
-                                                              #     i
-                                                              #    i  i
-                                                              #   i  i  i
-formation.append( [[0,-4],[0,-2],[0,-6],[-2,0],[0,0],[2,0]]  )  #'T' formation
-                                                              #    i i i
-                                                              #      i
-                                                              #      i
-                                                              #      i
-formation_id = int(sys.argv[2])
+formation=[None]*10
 
+formation[1]=[None]*(uav_num+1)
+for i in range(uav_num):
+    
+
+
+'''
+formation.append( [[-1,-1],[0,-1],[1,-1],[-1,0],[0,0],[0,1]] )  #2x3 formation  
+                                                              #  f l f 
+                                                              #  f f f
+formation.append(  [[-2,-2],[0,-2],[2,-2],[-1,-1],[0,0],[1,-1]] )#Trianglar formation
+                                                              #     l
+                                                              #    f  f
+                                                              #   f  f  f
+formation.append( [[0,-4],[0,-2],[0,-6],[-2,0],[0,0],[2,0]]  )  #'T' formation
+                                                              #    f l f
+                                                              #      f
+                                                              #      f
+                                                              #      f
+formation_id = int(sys.argv[2])
+'''
 
 def leader_cmd_vel_callback(msg):
     global leader_cmd_vel
