@@ -22,8 +22,39 @@ for i in range(uav_num):
 #    uav_5 is the leader in the formation mission
 formation=[None]*10
 
-formation[1]=[None]*(uav_num+1)
-for i in range(uav_num):
+formation_temp = [None]*(uav_num+1)               
+for i in range(uav_num):                           
+    if i+1 <= (uav_num/2):   
+        if (i+1)%2 == 1£º                          
+            formation_temp[i+1] = Point(0,i)
+        else:
+            formation_temp[i+1] = Point(0,-i-1)    #  2x5 formation
+    else:                                          #  f f l f f
+        if (i+1)%2 == 1£º                          #  f f f f f 
+            formation_temp[i+1] = Point( -2, 1+i-(uav_num/2) )
+        else:
+            formation_temp[i+1] = Point( -2, (uav_num/2)-i+2 ) 
+formation[0] = formation_temp
+
+
+formation_temp = [None]*(uav_num+1)         #  2x5 formation
+for i in range(uav_num):                    #   
+    if (i+1)%2 == 1£º                       #  l f f f f 
+        formation_temp[i+1] = Point(0,i)    #  f
+    elif i+1 != uav_num:                    #  f   
+        formation_temp[i+1] = Point(-i,0)   #  f
+    else:                                   #  f       f
+        formation_temp[i+1] = Point(-4,4)
+formation[1] = formation_temp               
+
+
+formation_temp = [None]*(uav_num+1)         #  formation
+formation_temp[1]=Point(0,0)
+formation_temp[2]=Point(-2,-2)£»formation_temp[3]=Point(-2,2)
+formation_temp[4]=Point(-4,-4)£»formation_temp[5]=Point(-4,0)£»formation_temp[7]=Point(-4,4)
+formation_temp[10]=Point(-6,-6)£»formation_temp[8]=Point(-6,-2)£»formation_temp[6]=Point(-6,2)£»formation_temp[2]=Point(-6,6)
+formation[2] = formation_temp      
+
     
 
 
@@ -87,8 +118,8 @@ while(1):
     for i in range(uav_num):
         uav_id = i+1
         if uav_id != leader_id:
-            follower_cmd_vel[uav_id].linear.x = (leader_cmd_vel.twist.linear.x+Kp*(formation[formation_id][i][0]- relative_pose[uav_id].pose.position.x) ) 
-            follower_cmd_vel[uav_id].linear.y = (leader_cmd_vel.twist.linear.y+Kp*(formation[formation_id][i][1]- relative_pose[uav_id].pose.position.y) )
+            follower_cmd_vel[uav_id].linear.x = (leader_cmd_vel.twist.linear.x+Kp*(formation[formation_id][uav_id].x- relative_pose[uav_id].pose.position.x) ) 
+            follower_cmd_vel[uav_id].linear.y = (leader_cmd_vel.twist.linear.y+Kp*(formation[formation_id][uav_id].y- relative_pose[uav_id].pose.position.y) )
             follower_cmd_vel[uav_id].linear.z = leader_cmd_vel.twist.linear.z
             follower_cmd_vel[uav_id].angular.x = 0.0; follower_cmd_vel[uav_id].angular.y = 0.0;  follower_cmd_vel[uav_id].angular.z = 0.0
             follower_vel_enu_pub[uav_id].publish(follower_cmd_vel[uav_id])
