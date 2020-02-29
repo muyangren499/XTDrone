@@ -1,13 +1,19 @@
 import rospy
 from geometry_msgs.msg import Twist,Pose,PoseStamped,TwistStamped
-Kp = 0.01
-uav_num = 5
-vision_pose = [PoseStamped()]*(uav_num+1)
-relative_pose = [PoseStamped()]*(uav_num+1)
-follower_vel_flu_pub = [None]*(uav_num+1)
+Kp = 0.1
+uav_num = 6
 leader_id = 5
+vision_pose = [None]*(uav_num+1)
+relative_pose = [None]*(uav_num+1)
+follower_vel_enu_pub = [None]*(uav_num+1)
+relative_pose_pub = [None]*(uav_num+1)
+follower_cmd_vel = [None]*(uav_num+1)
 leader_cmd_vel = TwistStamped()
-follower_cmd_vel = [Twist()]*(uav_num+1)
+
+for i in range(uav_num):
+    vision_pose[i+1]=PoseStamped()
+    relative_pose[i+1]=PoseStamped()
+    follower_cmd_vel[i+1]=Twist()
 
 formation=[]
 formation.append( [[-1,-1],[0,-1],[1,-1],[-1,0],[0,0],[0,1]] )  #2x3 formation
@@ -38,7 +44,7 @@ def calculate_relative_pose(uav_id):
 vision_pose_callback = [None]*(uav_num+1)
 
 rospy.init_node('formation_control')
-
+'''
 for i in range(uav_num):
     uav_id = i+1
     def func(msg):
@@ -46,6 +52,37 @@ for i in range(uav_num):
         vision_pose[uav_id] = msg
         calculate_relative_pose(uav_id)
     vision_pose_callback[uav_id] = func
+'''
+def func1(msg):
+    vision_pose[1]=msg
+    calculate_relative_pose(1)
+vision_pose_callback[1] = func1
+
+def func2(msg):
+    vision_pose[2]=msg
+    calculate_relative_pose(2)
+vision_pose_callback[2] = func2
+
+def func3(msg):
+    vision_pose[3]=msg
+    calculate_relative_pose(3)
+vision_pose_callback[3] = func3
+
+def func4(msg):
+    vision_pose[4]=msg
+    calculate_relative_pose(4)
+vision_pose_callback[4] = func4
+
+def func5(msg):
+    vision_pose[5]=msg
+    calculate_relative_pose(5)
+vision_pose_callback[5] = func5
+
+def func6(msg):
+    vision_pose[6]=msg
+    calculate_relative_pose(6)
+vision_pose_callback[6] = func6
+
 
 for i in range(uav_num):
     uav_id = i+1
@@ -57,7 +94,7 @@ leader_cmd_vel_sub = rospy.Subscriber("/uav"+str(leader_id)+"/mavros/setpoint_ve
 for i in range(uav_num):
     uav_id = i+1
     if uav_id != leader_id:
-        follower_vel_flu_pub[i+1] = rospy.Publisher(
+        follower_vel_enu_pub[i+1] = rospy.Publisher(
          '/xtdrone/uav'+str(i+1)+'/cmd_vel_enu', Twist, queue_size=10)
 
 while(1):
@@ -68,4 +105,4 @@ while(1):
             follower_cmd_vel[uav_id].linear.y = (leader_cmd_vel.twist.linear.y+Kp*(formation[formation_id][i][1]- relative_pose[uav_id].pose.position.y) )
             follower_cmd_vel[uav_id].linear.z = leader_cmd_vel.twist.linear.z
             follower_cmd_vel[uav_id].angular.x = 0.0; follower_cmd_vel[uav_id].angular.y = 0.0;  follower_cmd_vel[uav_id].angular.z = 0.0
-            follower_vel_flu_pub[uav_id].publish(follower_cmd_vel[uav_id])
+            follower_vel_enu_pub[uav_id].publish(follower_cmd_vel[uav_id])
