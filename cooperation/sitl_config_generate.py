@@ -79,7 +79,7 @@ with open('./launch/multi_uav.launch','w') as f:
             elif '''name="x"''' in line:
                 f.write('''            <arg name="x" value="0"/>\n''')
             elif '''name="y"''' in line:
-                f.write('''            <arg name="y" value="%d"/>\n''' %( (2(num%2)-1 )*(num-1) ) )
+                f.write('''            <arg name="y" value="%d"/>\n''' %( (2*(num%2)-1 )*(num-1) ) )
             else:
                 f.write('%s' %line)
         f.write("\n")
