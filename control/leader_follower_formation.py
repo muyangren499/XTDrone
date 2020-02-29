@@ -18,6 +18,7 @@ for i in range(uav_num):
     relative_pose[i+1]=PoseStamped()
     follower_cmd_vel[i+1]=Twist()
 
+#    uav_5 is the leader in the formation mission
 formation=[]
 formation.append( [[-1,-1],[0,-1],[1,-1],[-1,0],[0,0],[0,1]] )  #2x3 formation
                                                               #  i i i 
