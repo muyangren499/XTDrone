@@ -1,5 +1,6 @@
 #The number of drones
-uav_num=6
+import sys
+uav_num=int(sys.argv[1])
 ekf_dir="./ekf2_config/"
 launch_dir="./launch/"
 with open('launch_head','r') as f:
@@ -76,9 +77,9 @@ with open('./launch/multi_uav.launch','w') as f:
             elif "mavlink_udp_port" in line:
                 f.write('''            <arg name="mavlink_udp_port" value="%d"/>\n'''%SITL)
             elif '''name="x"''' in line:
-                f.write('''            <arg name="x" value="%d"/>\n''' %((num-1)//4))
+                f.write('''            <arg name="x" value="0"/>\n''')
             elif '''name="y"''' in line:
-                f.write('''            <arg name="y" value="%d"/>\n''' %((num-1)%4))
+                f.write('''            <arg name="y" value="%d"/>\n''' %(num-1) )
             else:
                 f.write('%s' %line)
         f.write("\n")
