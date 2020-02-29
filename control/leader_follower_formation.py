@@ -2,8 +2,9 @@
 # -*- coding: UTF-8 -*-
 import rospy
 from geometry_msgs.msg import Twist,Pose,PoseStamped,TwistStamped
+from std_msgs.msg import String
 import sys 
-Kp = 0.1
+Kp = 0.15
 uav_num = int(sys.argv[1])
 leader_id = 5
 vision_pose = [None]*(uav_num+1)
@@ -31,7 +32,7 @@ formation.append( [[0,-4],[0,-2],[0,-6],[-2,0],[0,0],[2,0]]  )  #'T' formation
                                                               #      i
                                                               #      i
                                                               #      i
-formation_id = int(sys.argv[2])
+formation_id = 0
 
 
 def leader_cmd_vel_callback(msg):
@@ -54,19 +55,25 @@ def vision_pose_callback(msg,id):
     vision_pose[id] = msg
     calculate_relative_pose(id)
 
+def cmd_callback(msg):
+    global formation_id
+    if not msg.data == '': 
+        formation_id = int(msg.data[-1])
+        print("Switch to Formation"+str(formation_id))
+
 for i in range(uav_num):
     uav_id = i+1
     rospy.Subscriber("/uav"+str(uav_id)+"/mavros/vision_pose/pose", PoseStamped , vision_pose_callback,uav_id)
 
 leader_cmd_vel_sub = rospy.Subscriber("/uav"+str(leader_id)+"/mavros/setpoint_velocity/cmd_vel", TwistStamped, leader_cmd_vel_callback)
-
+formation_switch_sub = rospy.Subscriber("/xtdrone"+"/uav"+str(leader_id)+"/cmd",String, cmd_callback)
 
 for i in range(uav_num):
     uav_id = i+1
     if uav_id != leader_id:
         follower_vel_enu_pub[i+1] = rospy.Publisher(
          '/xtdrone/uav'+str(i+1)+'/cmd_vel_enu', Twist, queue_size=10)
-         
+
 rate = rospy.Rate(100)
 while(1):
     for i in range(uav_num):
