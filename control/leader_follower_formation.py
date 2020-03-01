@@ -36,7 +36,11 @@ for i in range(uav_num):
             formation_temp[i+1] = Point(0,-i-1,0)    
     else:                                         
         if (i+1)%2 == 1:                          
+<<<<<<< HEAD
             formation_temp[i+1] = Point( -2, 1+i-(uav_num/2),0 )
+=======
+            formation_temp[i+1] = Point( -2, 1+i-(uav_num/2) ,0)
+>>>>>>> a77c38071fbe69265c04d8631e8caa9f65baebb7
         else:
             formation_temp[i+1] = Point( -2, (uav_num/2)-i+2 ,0) 
 formation[0] = formation_temp
@@ -53,12 +57,16 @@ for i in range(uav_num):
     if (i+1)%2 == 1:                       
         formation_temp[i+1] = Point(0,i,0)    
     elif i+1 != uav_num:                      
+<<<<<<< HEAD
         formation_temp[i+1] = Point(-i,0,0)   
+=======
+        formation_temp[i+1] = Point(-i-1,0,0)   
+>>>>>>> a77c38071fbe69265c04d8631e8caa9f65baebb7
     else:                                   
         formation_temp[i+1] = Point(-4,4,0)
 formation[1] = formation_temp               
 
-''' 'L' formation  2
+''' '△' formation  2
        l
       f f
      f f f
@@ -68,9 +76,28 @@ formation_temp = [None]*(uav_num+1)
 formation_temp[1]=Point(0,0,0)
 formation_temp[2]=Point(-2,-2,0);formation_temp[3]=Point(-2,2,0)
 formation_temp[4]=Point(-4,-4,0);formation_temp[5]=Point(-4,0,0);formation_temp[7]=Point(-4,4,0)
+<<<<<<< HEAD
 formation_temp[10]=Point(-6,-6,0);formation_temp[8]=Point(-6,-2,0);formation_temp[6]=Point(-6,2,0);formation_temp[2]=Point(-6,6,0)
 formation[9] = formation_temp      
+=======
+formation_temp[10]=Point(-6,-6,0);formation_temp[8]=Point(-6,-2,0);formation_temp[6]=Point(-6,2,0);formation_temp[9]=Point(-6,6,0)
+formation[2] = formation_temp      
+>>>>>>> a77c38071fbe69265c04d8631e8caa9f65baebb7
 
+    
+
+
+def leader_cmd_vel_callback(msg):
+    global leader_cmd_vel
+    leader_cmd_vel = msg
+
+def calculate_relative_pose(uav_id):
+    global relative_pose
+    global vision_pose
+    relative_pose[uav_id].pose.position.x = vision_pose[uav_id].pose.pose.position.x - vision_pose[leader_id].pose.pose.position.x
+    relative_pose[uav_id].pose.position.y = vision_pose[uav_id].pose.pose.position.y - vision_pose[leader_id].pose.pose.position.y
+    relative_pose[uav_id].pose.position.z = vision_pose[uav_id].pose.pose.position.z - vision_pose[leader_id].pose.pose.position.z
+    
     
 formation_id = 0
 
@@ -103,7 +130,6 @@ def calculate_relative_pose(uav_id):
 vision_pose_callback = [None]*(uav_num+1)
 
 rospy.init_node('formation_control')
-
 
 def vision_pose_callback(msg,id):
     global vision_pose
