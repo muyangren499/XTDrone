@@ -38,7 +38,7 @@ for i in range(uav_num):
         if (i+1)%2 == 1:                          
             formation_temp[i+1] = Point( -2, 1+i-(uav_num/2),0 )
         else:
-            formation_temp[i+1] = Point( -2, (uav_num/2)-i+2 ,0) 
+            formation_temp[i+1] = Point( -2, (uav_num/2)-i ,0) 
 formation[0] = formation_temp
 
 ''' 'L' formation  1
