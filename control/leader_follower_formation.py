@@ -38,7 +38,7 @@ for i in range(uav_num):
         if (i+1)%2 == 1:                          
             formation_temp[i+1] = Point( -2, 1+i-(uav_num/2),0 )
         else:
-            formation_temp[i+1] = Point( -2, (uav_num/2)-i+2 ,0) 
+            formation_temp[i+1] = Point( -2, (uav_num/2)-i ,0) 
 formation[0] = formation_temp
 
 ''' 'L' formation  1
@@ -69,7 +69,7 @@ formation_temp[1]=Point(0,0,0)
 formation_temp[2]=Point(-2,-2,0);formation_temp[3]=Point(-2,2,0)
 formation_temp[4]=Point(-4,-4,0);formation_temp[5]=Point(-4,0,0);formation_temp[7]=Point(-4,4,0)
 formation_temp[10]=Point(-6,-6,0);formation_temp[8]=Point(-6,-2,0);formation_temp[6]=Point(-6,2,0);formation_temp[9]=Point(-6,6,0)
-formation[9] = formation_temp      
+formation[2] = formation_temp      
 
     
 

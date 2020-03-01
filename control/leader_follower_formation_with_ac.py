@@ -4,7 +4,8 @@ import rospy
 from geometry_msgs.msg import Twist,Pose,PoseStamped,TwistStamped
 from std_msgs.msg import String
 import sys 
-Kp = 0.15
+import time
+Kp = 0.2
 uav_num = int(sys.argv[1])
 leader_id = 5
 vision_pose = [None]*(uav_num+1)
@@ -76,26 +77,32 @@ for i in range(uav_num):
     if uav_id != leader_id:
         follower_vel_enu_pub[uav_id] = rospy.Publisher(
          '/xtdrone/uav'+str(uav_id)+'/cmd_vel_enu', Twist, queue_size=10)
-
+leader_height = vision_pose[leader_id].pose.position.z 
+print("recording original height...")
+time.sleep(2)
+print(str(leader_height)+'m')
 rate = rospy.Rate(100)
 while(1):
     # Avoid collision with other drones 
-    leader_height = vision_pose[leader_id].pose.position.z 
     for i in range(uav_num): 
         uav_id = i+1      
         for j in range(1,uav_num-i):            
             if pow(vision_pose[uav_id].pose.position.x-vision_pose[uav_id+j].pose.position.x,2)\
-                +pow(vision_pose[uav_id].pose.position.y-vision_pose[uav_id+j].pose.position.y,2) < 1:
-                relative_vel_z[uav_id] = Kp*(leader_height+avoid_pos_z-vision_pose[uav_id].pose.position.z)
-                relative_vel_z[uav_id+j] = Kp*(leader_height-avoid_pos_z-vision_pose[uav_id+j].pose.position.z)
+                +pow(vision_pose[uav_id].pose.position.y-vision_pose[uav_id+j].pose.position.y,2)\
+                 +pow(vision_pose[uav_id].pose.position.z-vision_pose[uav_id+j].pose.position.z,2)  < 1:
+                relative_vel_z[uav_id] = Kp*avoid_pos_z
+                relative_vel_z[uav_id+j] = -Kp*avoid_pos_z
+            else:
+                relative_vel_z[uav_id] = 0
+                relative_vel_z[uav_id+j] = 0
     for i in range(uav_num):
         uav_id = i+1
         if uav_id != leader_id:
             follower_cmd_vel[uav_id].linear.x = (leader_cmd_vel.linear.x+Kp*(formation[formation_id][i][0]- relative_pose[uav_id].pose.position.x) ) 
             follower_cmd_vel[uav_id].linear.y = (leader_cmd_vel.linear.y+Kp*(formation[formation_id][i][1]- relative_pose[uav_id].pose.position.y) )
-            follower_cmd_vel[uav_id].linear.z = leader_cmd_vel.linear.z+relative_vel_z[uav_id]
+            follower_cmd_vel[uav_id].linear.z = leader_cmd_vel.linear.z+relative_vel_z[uav_id] + Kp*(leader_height-vision_pose[uav_id].pose.position.z)
             follower_cmd_vel[uav_id].angular.x = 0.0; follower_cmd_vel[uav_id].angular.y = 0.0;  follower_cmd_vel[uav_id].angular.z = 0.0
             follower_vel_enu_pub[uav_id].publish(follower_cmd_vel[uav_id])
-    leader_cmd_vel.linear.z = leader_cmd_vel.linear.z + relative_vel_z[leader_id]
+    leader_cmd_vel.linear.z = leader_cmd_vel.linear.z + relative_vel_z[leader_id] + Kp*(leader_height-vision_pose[leader_id].pose.position.z)
     leader_vel_enu_pub.publish(leader_cmd_vel)
     rate.sleep()
