@@ -6,7 +6,7 @@ from std_msgs.msg import String
 import sys 
 Kp = 0.15
 uav_num = int(sys.argv[1])
-leader_id = 5
+leader_id = 1
 vision_pose = [None]*(uav_num+1)
 relative_pose = [None]*(uav_num+1)
 follower_vel_enu_pub = [None]*(uav_num+1)
@@ -37,7 +37,6 @@ for i in range(uav_num):
     else:                                         
         if (i+1)%2 == 1:                          
             formation_temp[i+1] = Point( -2, 1+i-(uav_num/2),0 )
-            formation_temp[i+1] = Point( -2, 1+i-(uav_num/2) ,0)
         else:
             formation_temp[i+1] = Point( -2, (uav_num/2)-i+2 ,0) 
 formation[0] = formation_temp
@@ -54,7 +53,6 @@ for i in range(uav_num):
     if (i+1)%2 == 1:                       
         formation_temp[i+1] = Point(0,i,0)    
     elif i+1 != uav_num:                      
-        formation_temp[i+1] = Point(-i,0,0)   
         formation_temp[i+1] = Point(-i-1,0,0)   
     else:                                   
         formation_temp[i+1] = Point(-4,4,0)
@@ -70,10 +68,8 @@ formation_temp = [None]*(uav_num+1)
 formation_temp[1]=Point(0,0,0)
 formation_temp[2]=Point(-2,-2,0);formation_temp[3]=Point(-2,2,0)
 formation_temp[4]=Point(-4,-4,0);formation_temp[5]=Point(-4,0,0);formation_temp[7]=Point(-4,4,0)
-formation_temp[10]=Point(-6,-6,0);formation_temp[8]=Point(-6,-2,0);formation_temp[6]=Point(-6,2,0);formation_temp[2]=Point(-6,6,0)
-formation[9] = formation_temp      
 formation_temp[10]=Point(-6,-6,0);formation_temp[8]=Point(-6,-2,0);formation_temp[6]=Point(-6,2,0);formation_temp[9]=Point(-6,6,0)
-formation[2] = formation_temp      
+formation[9] = formation_temp      
 
     
 
