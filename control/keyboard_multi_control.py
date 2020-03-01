@@ -30,7 +30,8 @@ r   : return home
 t/y : arm/disarm
 v/n : takeoff/land
 b   : offboard
-s or k : hover and remove the mask of keyboard control
+s   : hover(offboard mode) and remove the mask of keyboard control
+k   : hover(hover mode) and remove the mask of keyboard control
 0~9 : extendable mission(eg.different formation configuration)
       this will mask the keyboard control
 g   : control the leader
@@ -202,8 +203,12 @@ if __name__=="__main__":
             elif key == 'g':
                 ctrl_leader = not ctrl_leader
                 print_msg()
-                print("Control the leader")
-            elif key == 's' or key == 'k' :
+            elif key == 'k':
+                cmd = 'AUTO.LOITER'
+                cmd_vel_mask = False
+                print_msg()
+                print('Loiter')
+            elif key == 's' :
                 cmd_vel_mask = False
                 target_forward_vel   = 0.0
                 target_leftward_vel   = 0.0
