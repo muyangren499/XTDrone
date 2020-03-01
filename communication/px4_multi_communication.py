@@ -117,11 +117,11 @@ class PX4Communication:
         if msg.data == '':
             return
 
-        elif msg.data == 'ARM' and self.arm_state == False:
+        elif msg.data == 'ARM':
             self.arm_state =self.arm()
             print("UAV"+str(self.id)+": "+'Armed'+str(self.arm_state))
 
-        elif msg.data == 'DISARM' and self.arm_state == True:
+        elif msg.data == 'DISARM':
             disarm_state =self.disarm()
             if disarm_state:
                 self.arm_state = False
@@ -180,7 +180,7 @@ class PX4Communication:
             return False
 
     def takeoff_detection(self):
-        if self.local_pose.pose.position.z > 0.3 and self.offboard_state and self.arm_state:
+        if self.local_pose.pose.position.z > 0.3 and self.arm_state:
             return True
         else:
             return False
