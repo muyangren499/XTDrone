@@ -31,7 +31,7 @@ for i in range(uav_num):
     follower_cmd_vel[i+1]=Twist()
 
 formation=[]
-formation.append( [[-1,-1],[0,-1],[1,-1],[-1,0],[0,0],[0,1]] )  #2x3 formation
+formation.append( [[-1,-1],[0,-1],[1,-1],[-1,0],[0,0],[1,0]] )  #2x3 formation
                                                               #  i i i 
                                                               #  i i i
 formation.append(  [[-2,-2],[0,-2],[2,-2],[-1,-1],[0,0],[1,-1]] )#Trianglar formation
