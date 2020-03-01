@@ -6,7 +6,7 @@ from std_msgs.msg import String
 import sys 
 Kp = 0.15
 uav_num = int(sys.argv[1])
-leader_id = 5
+leader_id = 1
 vision_pose = [None]*(uav_num+1)
 relative_pose = [None]*(uav_num+1)
 follower_vel_enu_pub = [None]*(uav_num+1)
