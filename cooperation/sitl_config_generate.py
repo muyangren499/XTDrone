@@ -10,6 +10,13 @@ with open('launch_temp','r') as f:
     launch_lines=[]
     for line in f.readlines():
          launch_lines.append(line)
+with open('launch_head_1.9','r') as f:
+    launch_head_1_9=[]
+    launch_head_1_9=f.read()
+with open('launch_temp_1.9','r') as f:
+    launch_lines_1_9=[]
+    for line in f.readlines():
+         launch_lines_1_9.append(line)
 with open('ekf2_temp','r') as f:
     ekf2lines=[]
     for line in f.readlines():
@@ -85,8 +92,40 @@ with open('./launch/multi_uav.launch','w') as f:
         f.write("\n")
             
     f.write('</launch>')
-    print ".launch down"
-        
+    print ".launch for 1.8  down"
+
+
+with open('./launch_1.9/multi_uav.launch','w') as f:
+    f.write(launch_head_1_9)
+    for num in range(1,uav_num+1):
+        mavlink_1=34570-1+num*2
+        mavlink_2=mavlink_1+1
+        onboard=14540+num-1
+        SITL=24560+(num-1)*2
+        TCP=4560+num
+        for line in launch_lines_1_9:
+            if "<!-- UAV" in line:
+                f.write("     <!-- UAV%d-->\n" %num)
+            elif "<group ns" in line:
+                f.write('''     <group ns="uav%d">\n''' %num)
+            elif '''<arg name="ID" value="1"/>''' in line:
+                f.write('''        <arg name="ID" value="%d"/>\n''' %num)
+            elif "udp://:" in line:
+                f.write('''        <arg name="fcu_url" default="udp://:%d@127.0.0.1:%d"/>\n''' %(onboard,mavlink_2))
+            elif "mavlink_udp_port" in line:
+                f.write('''            <arg name="mavlink_udp_port" value="%d"/>\n'''%SITL)
+            elif "mavlink_tcp_port" in line:
+                f.write('''            <arg name="mavlink_tcp_port" value="%d"/>\n'''%TCP)
+            elif '''name="x"''' in line:
+                f.write('''            <arg name="x" value="0"/>\n''')
+            elif '''name="y"''' in line:
+                f.write('''            <arg name="y" value="%d"/>\n''' %( (2*(num%2)-1 )*(num-1) ) )
+            else:
+                f.write('%s' %line)
+        f.write("\n")
+            
+    f.write('</launch>')
+    print ".launch for 1.9 down"      
 
 
 
