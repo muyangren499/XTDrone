@@ -97,11 +97,11 @@ with open('./launch/multi_uav.launch','w') as f:
 
 with open('./launch_1.9/multi_uav.launch','w') as f:
     f.write(launch_head_1_9)
-    for num in range(1,uav_num+1):
+    for num in range(1,uav_num):
         mavlink_1=34570-1+num*2
         mavlink_2=mavlink_1+1
-        onboard=14540+num-1
-        SITL=24560+(num-1)*2
+        onboard=14540+num
+        SITL=24560+(num)*2
         TCP=4560+num
         for line in launch_lines_1_9:
             if "<!-- UAV" in line:
@@ -119,7 +119,7 @@ with open('./launch_1.9/multi_uav.launch','w') as f:
             elif '''name="x"''' in line:
                 f.write('''            <arg name="x" value="0"/>\n''')
             elif '''name="y"''' in line:
-                f.write('''            <arg name="y" value="%d"/>\n''' %( (2*(num%2)-1 )*(num-1) ) )
+                f.write('''            <arg name="y" value="%d"/>\n''' %( (2*(num%2)-1 )*(num) ) )
             else:
                 f.write('%s' %line)
         f.write("\n")
