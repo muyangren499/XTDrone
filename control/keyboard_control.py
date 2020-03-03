@@ -23,7 +23,7 @@ i/, : increase/decrease upward velocity (-1~1)
 j/l : increase/decrease angular velocity (-0.1~0.1)
 r   : return home
 t/y : arm/disarm
-v/n : takeoff/land
+v/n : takeoff(disenabled now)/land
 b   : offboard
 s or k : hover
 0~9 : extendable mission
@@ -142,9 +142,10 @@ if __name__=="__main__":
                 print(msg)
                 print('Disarming')
             elif key == 'v':
-                cmd = 'AUTO.TAKEOFF'
+                #cmd = 'AUTO.TAKEOFF'
+                cmd = ''
                 print(msg)
-                print('Takeoff')
+                print('Takeoff mode is disenabled now')
             elif key == 'b':
                 cmd = 'OFFBOARD'
                 print(msg)

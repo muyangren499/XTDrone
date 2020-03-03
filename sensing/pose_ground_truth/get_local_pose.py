@@ -14,7 +14,10 @@ def get_odom():
 
 if __name__ == '__main__':
     rospy.init_node('get_pose_groundtruth')
-    pose_pub = rospy.Publisher("/mavros/vision_pose/pose", PoseStamped, queue_size=2)
+    if sys.argv[1] == 'groundtruth':
+        pose_pub = rospy.Publisher("/pose_groundtruth", PoseStamped, queue_size=2)
+    else:
+        pose_pub = rospy.Publisher("/mavros/vision_pose/pose", PoseStamped, queue_size=2)
     local_pose = PoseStamped()
     local_pose.header.frame_id = 'map'
     '''
