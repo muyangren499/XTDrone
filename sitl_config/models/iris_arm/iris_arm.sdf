@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<sdf version='1.5'>
+  <model name='iris_arm'>
+
+    <include>
+      <uri>model://iris</uri>
+    </include> 
+<!-- For Stereo Camera Payload -->
+      <include>
+        <uri>model://stereo_cam</uri>
+        <pose>0 0 -0.05 0 0 0</pose>
+      </include>
+
+    <joint name="stereo_joint" type="fixed">
+      <child>stereo_camera::link</child>
+      <parent>iris::base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>0</lower>
+        </limit>
+      </axis>
+    </joint>
+
+<!-- For Arm Payload -->
+      <include>
+        <uri>model://arm</uri>
+        <pose>0 0 -0.15 0 0 0</pose>
+      </include>
+    <joint name="arm_joint" type="fixed">
+      <child>arm::arm_link_0</child>
+      <parent>iris::base_link</parent>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <upper>0</upper>
+          <lower>0</lower>
+        </limit>
+      </axis>
+    </joint>
+
+  </model>
+</sdf>
+<!-- vim: set noet fenc=utf-8 ff=unix sts=0 sw=4 ts=4 : -->
+
+
+  
+ 

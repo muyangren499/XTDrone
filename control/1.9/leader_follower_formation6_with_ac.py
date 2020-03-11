@@ -26,9 +26,9 @@ hover = True
 avoid = False
 
 for i in range(uav_num):
-    local_pose[i+1]=PoseStamped()
-    relative_pose[i+1]=PoseStamped()
-    follower_cmd_vel[i+1]=Twist()
+    local_pose[i]=PoseStamped()
+    relative_pose[i]=PoseStamped()
+    follower_cmd_vel[i]=Twist()
 
 formation=[]
 formation.append( [[-1,-1],[0,-1],[1,-1],[-1,0],[0,0],[1,0]] )  #2x3 formation

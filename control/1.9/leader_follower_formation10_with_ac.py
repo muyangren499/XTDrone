@@ -157,8 +157,8 @@ leader_vel_enu_pub =  rospy.Publisher('/xtdrone/uav'+str(leader_id)+'/cmd_vel_en
 for i in range(uav_num):
     uav_id = i
     if uav_id != leader_id:
-        follower_vel_enu_pub[i+1] = rospy.Publisher(
-         '/xtdrone/uav'+str(i+1)+'/cmd_vel_enu', Twist, queue_size=10)
+        follower_vel_enu_pub[uav_id] = rospy.Publisher(
+         '/xtdrone/uav'+str(uav_id)+'/cmd_vel_enu', Twist, queue_size=10)
 for i in range(10):
     leader_height = local_pose[leader_id].pose.position.z 
     time.sleep(0.1)

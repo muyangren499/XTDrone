@@ -132,7 +132,7 @@ def calculate_relative_pose(uav_id):
     relative_pose[uav_id].pose.position.y = local_pose[uav_id].pose.position.y - local_pose[leader_id].pose.position.y
     relative_pose[uav_id].pose.position.z = local_pose[uav_id].pose.position.z - local_pose[leader_id].pose.position.z
 
-local_pose_callback = [None]*(uav_num+1)
+
 
 rospy.init_node('formation_control')
 
