@@ -2,7 +2,6 @@
   <arg name="IS_TWISTSTAMPED" default="true" />
   <arg name="use_rviz" default="true" />
   <arg name="publish_covariance" default="false"/>
-  #### set up data playback from bag #############################
 
   <param name="/use_sim_time" value="true"/>
   <param name="/stamped_vel" value="$(arg IS_TWISTSTAMPED)"/>
