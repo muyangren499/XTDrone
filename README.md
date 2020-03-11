@@ -55,7 +55,7 @@
 
 #### 安装教程
 
-见[XTDrone使用文档](https://www.yuque.com/qvdzhs/xtdrone_manual)
+见[XTDrone使用文档](https://www.yuque.com/qvdzhs/xtdrone_manual_cn)
 
 #### 参与贡献
 
