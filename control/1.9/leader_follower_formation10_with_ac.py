@@ -151,7 +151,7 @@ for i in range(uav_num):
     uav_id = i
     rospy.Subscriber("/uav"+str(uav_id)+"/mavros/local_position/pose", PoseStamped , local_pose_callback,uav_id)
 
-leader_cmd_vel_sub = rospy.Subscriber("/xtdrone/leader_cmd_vel", Twist, leader_cmd_vel_callback)
+leader_cmd_vel_sub = rospy.Subscriber("/xtdrone/leader/cmd_vel", Twist, leader_cmd_vel_callback)
 formation_switch_sub = rospy.Subscriber("/xtdrone/leader_cmd",String, cmd_callback)
 leader_vel_enu_pub =  rospy.Publisher('/xtdrone/uav'+str(leader_id)+'/cmd_vel_enu', Twist, queue_size=10)
 for i in range(uav_num):

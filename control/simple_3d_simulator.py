@@ -10,8 +10,8 @@ use_1_8 = 1
 
 
 #uav_num = int(sys.argv[1])
-uav_num=6
-step_time=0.05
+uav_num=9
+step_time=0.01
 
 pose_puber=[None]*uav_num
 
@@ -23,7 +23,7 @@ for i in range(uav_num):
     uav_id=i+use_1_8
     plot_x[i]= i//3
     plot_y[i]= i%3
-    pose_puber[i]=rospy.Publisher('/uav'+str(uav_id)+'/mavros/local_pose/pose', PoseStamped, queue_size=10)
+    pose_puber[i]=rospy.Publisher('/uav'+str(uav_id)+'/mavros/local_position/pose', PoseStamped, queue_size=10)
 
 # def pose_pub():
 #     for i in range(uav_num):
@@ -38,9 +38,9 @@ plt.ion()
 ax = Axes3D(fig)
 
 def init():
-    ax.set_xlim3d(-100, 100)
-    ax.set_ylim3d(-100, 100)
-    ax.set_zlim3d(-10,200)
+    ax.set_xlim3d(-10, 10)
+    ax.set_ylim3d(-10, 10)
+    ax.set_zlim3d(-10,10)
 
 
 def cmd_vel_callback(msg,id):
@@ -74,7 +74,7 @@ for i in range(uav_num):
 
 try:
     while 1:
-        # for i in range(uav_num):
+        #for i in range(uav_num):
         #     uav_id=i
         #     true_pose = get_odom(uav_id)
         #     plot_x[uav_id]=true_pose.pose.position.x
