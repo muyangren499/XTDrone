@@ -36,11 +36,24 @@ for i in range(uav_num):
 fig = plt.figure()
 plt.ion()
 ax = Axes3D(fig)
+label_lim = 20
+
+def scroll_call_back(event):
+    global label_lim
+    if event.button == 'up':
+        label_lim+=2
+        print('up')
+    elif event.button == 'down':
+        label_lim=label_lim-2 if label_lim>10 else 10
+        print('down')
+
+
+fig.canvas.mpl_connect('scroll_event', scroll_call_back)
 
 def init():
-    ax.set_xlim3d(-100, 100)
-    ax.set_ylim3d(-100, 100)
-    ax.set_zlim3d(-10,200)
+    ax.set_xlim3d(-label_lim, label_lim)
+    ax.set_ylim3d(-label_lim, label_lim)
+    ax.set_zlim3d(-1,200)
 
 
 def cmd_vel_callback(msg,id):
