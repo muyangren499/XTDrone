@@ -5,12 +5,13 @@ import numpy as np
 import rospy
 from geometry_msgs.msg import Twist,Pose,PoseStamped,TwistStamped
 from gazebo_msgs.srv import GetModelState
+import sys
 
 use_1_8 = 1
 
 
-#uav_num = int(sys.argv[1])
-uav_num=9
+uav_num = int(sys.argv[1])
+
 step_time=0.01
 
 pose_puber=[None]*uav_num
@@ -24,14 +25,6 @@ for i in range(uav_num):
     plot_x[i]= i//3
     plot_y[i]= i%3
     pose_puber[i]=rospy.Publisher('/uav'+str(uav_id)+'/mavros/local_position/pose', PoseStamped, queue_size=10)
-
-# def pose_pub():
-#     for i in range(uav_num):
-#         msg=PoseStamped()
-#         msg.pose.position.x=plot_x[i]
-#         msg.pose.position.y=plot_y[i]
-#         msg.pose.position.z=plot_z[i]
-#         pose_puber[i].publish(msg)
 
 fig = plt.figure()
 plt.ion()

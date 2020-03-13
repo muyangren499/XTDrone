@@ -21,10 +21,15 @@ class Follower:
         self.cmd_vel_enu = Twist()
         self.Kz_avoid = 0.3
         self.avoid_vel = Vector3(0,0,0)
+        self.following_switch = False
+        self.following_ids = []
         self.formation_config = 'waiting'
         self.following_count = 0
-        self.following_local_pose = None
-        self.target_postion = numpy.array([0,0,0])
+        self.Kp = 1
+        self.velxy_max = 0.5
+        self.velz_max = 1
+        self.following_local_pose = [None]*self.uav_num
+        self.following_local_pose_sub = [None]*self.uav_num
         self.arrive_count = 0
         self.local_pose_sub = rospy.Subscriber("/uav"+str(self.id)+"/mavros/local_position/pose", PoseStamped , self.local_pose_callback)
         #self.cmd_vel_sub = rospy.Subscriber("/xtdrone/follower/cmd_vel", Twist, self.cmd_vel_callback)
@@ -32,13 +37,14 @@ class Follower:
         self.formation_switch_sub = rospy.Subscriber("/xtdrone/formation_switch",String, self.formation_switch_callback)
         self.vel_enu_pub =  rospy.Publisher('/xtdrone/uav'+str(self.id)+'/cmd_vel_enu', Twist, queue_size=10)
         self.info_pub = rospy.Publisher('/xtdrone/uav'+str(self.id)+'/info', String, queue_size=10)
-
+        
     def local_pose_callback(self, msg):
         self.local_pose = msg
         #print(self.arrive_count)
 
     def following_local_pose_callback(self, msg, id):
         self.following_local_pose[id] = msg 
+        #print('here')
 
     def cmd_vel_callback(self, msg):
         self.cmd_vel_enu = msg
@@ -48,8 +54,12 @@ class Follower:
             self.hover = False
 
     def formation_switch_callback(self, msg):
+        if not self.formation_config == msg.data:
+            self.following_switch = True
+        else:
+            self.following_switch = False
         self.formation_config = msg.data
-        #print("Switch to Formation "+self.formation_config)
+        
 
     def avoid_vel_callback(self, msg):
         self.avoid_vel = msg.data
@@ -61,33 +71,50 @@ class Follower:
             if self.arrive_count > 100:
                 self.info_pub.publish("Arrived")
                 #print("Arrived")
-            if not self.formation_config == 'waiting':
+            if self.following_switch:
+                self.following_switch = False
                 self.info_pub.publish("Received")
-                self.target_postion = formation_dict[self.formation_config][:,self.id-2]
+                print("Follower"+str(self.id-1)+": Switch to Formation "+self.formation_config)
                 self.L_matrix = self.get_L_matrix(formation_dict[self.formation_config])
+                #print(self.L_matrix)
                 #self.L_matrix = numpy.array([[0,0,0,0,0,0,0,0,0],[1,-1,0,0,0,0,0,0,0],[1,1,-3,0,0,1,0,0,0],[0,0,0,-2,0,0,1,1,0],[0,0,1,0,-1,0,0,0,0],[0,1,0,0,1,-3,0,1,0],[1,0,0,0,0,0,-1,0,0],[0,0,0,0,0,0,1,-1,0],[0,0,0,0,0,1,0,0,-1]])
-                following_ids = numpy.argwhere(self.L_matrix[self.id-1,:] == 1)
-                if self.id == 2:
-                    print("following_ids", following_ids)
-                self.following_local_pose = [PoseStamped()]*len(following_ids)
+                self.following_ids = numpy.argwhere(self.L_matrix[self.id-1,:] == 1)
+                #if self.id == 2:
+                    #print(self.following_ids)
                 self.following_count = 0
-                for following_id in following_ids:
-                    rospy.Subscriber("/uav"+str(following_id[0]+1)+"/mavros/local_position/pose", PoseStamped , self.following_local_pose_callback,self.following_count)
+                for i in range(self.uav_num):
+                    if not self.following_local_pose_sub[i] == None:
+                        self.following_local_pose_sub[i].unregister()
+                for following_id in self.following_ids:
+                    #print('here')
+                    self.following_local_pose_sub[following_id[0]] = rospy.Subscriber("/uav"+str(following_id[0]+1)+"/mavros/local_position/pose", PoseStamped , self.following_local_pose_callback,following_id[0])
                     self.following_count += 1
-            if self.id == 2:
-                print("following_count", self.following_count)
-            self.cmd_vel_enu.linear.x = -formation_dict[self.formation_config][0, self.id-2] + self.avoid_vel.x 
-            self.cmd_vel_enu.linear.y = -formation_dict[self.formation_config][1, self.id-2] + self.avoid_vel.y
-            self.cmd_vel_enu.linear.z = -formation_dict[self.formation_config][2, self.id-2] + self.avoid_vel.z
-            for i in range(self.following_count):
-                self.cmd_vel_enu.linear.x += self.following_local_pose[i].pose.position.x - self.local_pose.pose.position.x
-                self.cmd_vel_enu.linear.y += self.following_local_pose[i].pose.position.y - self.local_pose.pose.position.y
-                self.cmd_vel_enu.linear.z += self.following_local_pose[i].pose.position.z - self.local_pose.pose.position.z
+                    time.sleep(1)
+            self.cmd_vel_enu.linear.x = self.avoid_vel.x 
+            self.cmd_vel_enu.linear.y = self.avoid_vel.y
+            self.cmd_vel_enu.linear.z = self.avoid_vel.z
+            for following_id in self.following_ids:
+                self.cmd_vel_enu.linear.x += self.following_local_pose[following_id[0]].pose.position.x - self.local_pose.pose.position.x + formation_dict[self.formation_config][0, self.id-2]
+                self.cmd_vel_enu.linear.y += self.following_local_pose[following_id[0]].pose.position.y - self.local_pose.pose.position.y + formation_dict[self.formation_config][1, self.id-2]
+                self.cmd_vel_enu.linear.z += self.following_local_pose[following_id[0]].pose.position.z - self.local_pose.pose.position.z+ formation_dict[self.formation_config][2, self.id-2]
+                if not following_id[0] == 0:
+                    self.cmd_vel_enu.linear.x -= formation_dict[self.formation_config][0, following_id[0]-1]
+                    self.cmd_vel_enu.linear.y -= formation_dict[self.formation_config][1, following_id[0]-1]
+                    self.cmd_vel_enu.linear.z -= formation_dict[self.formation_config][2, following_id[0]-1]
+            self.cmd_vel_enu.linear.x = self.Kp * self.cmd_vel_enu.linear.x
+            if self.cmd_vel_enu.linear.x > self.velxy_max:
+                self.cmd_vel_enu.linear.x = self.velxy_max
+            if self.cmd_vel_enu.linear.y > self.velxy_max:
+                self.cmd_vel_enu.linear.y = self.velxy_max
+            if self.cmd_vel_enu.linear.z > self.velz_max:
+                self.cmd_vel_enu.linear.z = self.velz_max
+            self.cmd_vel_enu.linear.y = self.Kp * self.cmd_vel_enu.linear.y
+            self.cmd_vel_enu.linear.z = self.Kp * self.cmd_vel_enu.linear.z
             if (self.cmd_vel_enu.linear.x)**2+(self.cmd_vel_enu.linear.y)**2+(self.cmd_vel_enu.linear.z)**2<0.2:
                 self.arrive_count += 1
             else:
                 self.arrive_count = 0
-                self.vel_enu_pub.publish(self.cmd_vel_enu)
+            self.vel_enu_pub.publish(self.cmd_vel_enu)
             rate.sleep()
 
     def get_L_matrix(self, rel_posi):
