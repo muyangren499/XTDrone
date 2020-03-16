@@ -5,7 +5,7 @@
     <!-- vehicle model and world -->
     <arg name="est" default="ekf2"/>
     <arg name="vehicle" default="iris"/>
-    <arg name="world" default="$(find mavlink_sitl_gazebo)/worlds/outdoor2.world"/>
+    <arg name="world" default="$(find mavlink_sitl_gazebo)/worlds/empty.world"/>
     <!-- gazebo configs -->
     <arg name="gui" default="true"/>
     <arg name="debug" default="false"/>
@@ -60,8 +60,8 @@
         <arg name="fcu_url" default="udp://:14541@127.0.0.1:34574"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn.launch">
-            <arg name="x" value="0"/>
-            <arg name="y" value="-1"/>
+            <arg name="x" value="1"/>
+            <arg name="y" value="1"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
@@ -89,8 +89,8 @@
         <arg name="fcu_url" default="udp://:14542@127.0.0.1:34576"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn.launch">
-            <arg name="x" value="0"/>
-            <arg name="y" value="2"/>
+            <arg name="x" value="-1"/>
+            <arg name="y" value="1"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
@@ -118,8 +118,8 @@
         <arg name="fcu_url" default="udp://:14543@127.0.0.1:34578"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn.launch">
-            <arg name="x" value="0"/>
-            <arg name="y" value="-3"/>
+            <arg name="x" value="-1"/>
+            <arg name="y" value="-1"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
@@ -147,8 +147,8 @@
         <arg name="fcu_url" default="udp://:14544@127.0.0.1:34580"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn.launch">
-            <arg name="x" value="0"/>
-            <arg name="y" value="4"/>
+            <arg name="x" value="1"/>
+            <arg name="y" value="-1"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
@@ -176,8 +176,8 @@
         <arg name="fcu_url" default="udp://:14545@127.0.0.1:34582"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn.launch">
-            <arg name="x" value="0"/>
-            <arg name="y" value="-5"/>
+            <arg name="x" value="2"/>
+            <arg name="y" value="2"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
@@ -205,8 +205,8 @@
         <arg name="fcu_url" default="udp://:14546@127.0.0.1:34584"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn.launch">
-            <arg name="x" value="0"/>
-            <arg name="y" value="6"/>
+            <arg name="x" value="-2"/>
+            <arg name="y" value="2"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
@@ -234,8 +234,8 @@
         <arg name="fcu_url" default="udp://:14547@127.0.0.1:34586"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn.launch">
-            <arg name="x" value="0"/>
-            <arg name="y" value="-7"/>
+            <arg name="x" value="-2"/>
+            <arg name="y" value="-2"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
@@ -263,8 +263,8 @@
         <arg name="fcu_url" default="udp://:14548@127.0.0.1:34588"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn.launch">
-            <arg name="x" value="0"/>
-            <arg name="y" value="8"/>
+            <arg name="x" value="2"/>
+            <arg name="y" value="-2"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>

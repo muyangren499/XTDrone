@@ -4,7 +4,6 @@ import rospy
 from geometry_msgs.msg import Twist, Vector3, PoseStamped
 from std_msgs.msg import String 
 from pyquaternion import Quaternion
-from formation_dict import formation_dict
 import time
 import math
 import numpy 
@@ -21,12 +20,13 @@ class Leader:
         self.followers_info = ["Moving"]*self.follower_num
         self.follower_arrived_num = 0
         self.follower_all_arrived = True
-        self.Kz_avoid = 0.3
         self.avoid_vel = Vector3(0,0,0)
         self.formation_config = 'waiting'
+        self.target_height_recorded = False
+        self.Kz = 0.5
         self.local_pose_sub = rospy.Subscriber("/uav"+str(self.id)+"/mavros/local_position/pose", PoseStamped , self.local_pose_callback)
         self.cmd_vel_sub = rospy.Subscriber("/xtdrone/leader/cmd_vel", Twist, self.cmd_vel_callback)
-        self.avoid_vel_sub = rospy.Subscriber("/xtdrone/leader/avoid_vel", Vector3, self.avoid_vel_callback)
+        self.avoid_vel_sub = rospy.Subscriber("/xtdrone/uav"+str(self.id)+"/avoid_vel", Vector3, self.avoid_vel_callback)
         self.formation_switch_sub = rospy.Subscriber("/gcs/formation_switch",String, self.cmd_callback)
         for i in range(self.follower_num):
             rospy.Subscriber('/xtdrone/uav'+str(i+1)+'/info',String,self.followers_info_callback,i)
@@ -50,7 +50,8 @@ class Leader:
             #print("Switch to Formation"+self.formation_config)
 
     def avoid_vel_callback(self, msg):
-        self.avoid_vel = msg.data
+        self.avoid_vel = msg
+        #print('leader: ', self.avoid_vel)
     
     def followers_info_callback(self, msg, id):
         self.followers_info[id] = msg.data
@@ -60,6 +61,7 @@ class Leader:
         rospy.init_node('leader')
         rate = rospy.Rate(50)
         while True:
+            self.cmd_vel_enu = Twist()
             for follower_info in self.followers_info:
                 if follower_info == "Arrived":
                     self.follower_arrived_num += 1
@@ -67,6 +69,11 @@ class Leader:
                 self.follower_all_arrived = True
             if self.follower_all_arrived:
                 self.formation_switch_pub.publish(self.formation_config)
+            if self.formation_config == 'pyramid':
+                if not self.target_height_recorded:
+                    target_height =  self.local_pose.pose.position.z + 2
+                    self.target_height_recorded = True
+                self.cmd_vel_enu.linear.z = self.Kz * (target_height - self.local_pose.pose.position.z)
             self.cmd_vel_enu.linear.x += self.avoid_vel.x
             self.cmd_vel_enu.linear.y += self.avoid_vel.y
             self.cmd_vel_enu.linear.z += self.avoid_vel.z
@@ -75,5 +82,5 @@ class Leader:
             rate.sleep()
 
 if __name__ == '__main__':
-    leader = Leader(1,9)
+    leader = Leader(1,int(sys.argv[1]))
     leader.loop()   
