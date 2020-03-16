@@ -25,12 +25,12 @@
 
 <!-- For Arm Payload -->
       <include>
-        <uri>model://arm</uri>
-        <pose>0 0 -0.15 0 0 0</pose>
+        <uri>model://MY_ARM</uri>
+        <pose>0 0 -0.1 1.57 0 0</pose>
       </include>
-    <joint name="arm_joint" type="fixed">
-      <child>arm::arm_link_0</child>
-      <parent>iris::base_link</parent>
+    <joint name="MY_ARM" type="fixed">
+      <child>arm::link_0</child>
+      <parent>MY_ARM::base_link</parent>
       <axis>
         <xyz>0 0 1</xyz>
         <limit>
