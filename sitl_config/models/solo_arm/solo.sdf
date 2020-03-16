@@ -1,10 +1,9 @@
 <?xml version='1.0'?>
 <sdf version='1.5'>
   <model name='solo'>
-    <!-- Solo body -->
 <!-- Solo body -->
     <link name='base_link'>
-      <pose>0 0 0.1 0 0 0</pose>
+      <pose>0 0 0.2 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>1.47</mass>
@@ -18,10 +17,10 @@
         </inertia>
       </inertial>
       <collision name='base_link_inertia_collision'>
-        <pose>0 0 0.06 0 0 0</pose>
+        <pose>0 0 -0.04 0 0 0</pose>
         <geometry>
           <box>
-            <size>0.32 0.32 0.18</size>
+            <size>0.32 0.32 0.38</size>
           </box>
         </geometry>
         <surface>
@@ -37,7 +36,7 @@
         </surface>
       </collision>
       <visual name='base_link_inertia_visual'>
-        <pose>0 0 0.1 0 0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -56,7 +55,7 @@
       <self_collide>0</self_collide>
     </link>
     <link name='imu_link'>
-      <pose>0 0 0.1 0 0 0</pose>
+      <pose>0 0 0.2 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.015</mass>
@@ -89,7 +88,7 @@
       </axis>
     </joint>
     <link name='rotor_0'>
-      <pose>0.14745 -0.14525 0.151 0 0 0</pose>
+      <pose>0.14745 -0.14525 0.251 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.005</mass>
@@ -103,7 +102,7 @@
         </inertia>
       </inertial>
       <collision name='rotor_0_collision'>
-        <pose>0 0 0.1 0 0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <geometry>
           <cylinder>
             <length>0.005</length>
@@ -120,7 +119,7 @@
         </surface>
       </collision>
       <visual name='rotor_0_visual'>
-        <pose>-0.14745 -0.14525 -0.151 0 0 0</pose>
+        <pose>-0.14745 -0.14525 -0.051 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -155,7 +154,7 @@
       </axis>
     </joint>
     <link name='rotor_1'>
-      <pose>-0.14745 0.14525 0.151 0 0 0</pose>
+      <pose>-0.14745 0.14525 0.251 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.005</mass>
@@ -186,7 +185,7 @@
         </surface>
       </collision>
       <visual name='rotor_1_visual'>
-        <pose>-0.14745 -0.14525 -0.151 0 0 0</pose>
+        <pose>-0.14745 -0.14525 -0.051 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -221,7 +220,7 @@
       </axis>
     </joint>
     <link name='rotor_2'>
-      <pose>0.14745 0.14525 0.151 0 0 0</pose>
+      <pose>0.14745 0.14525 0.251 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.005</mass>
@@ -252,7 +251,7 @@
         </surface>
       </collision>
       <visual name='rotor_2_visual'>
-        <pose>-0.14745 0.14525 -0.151 0 0 0</pose>
+        <pose>-0.14745 0.14525 -0.051 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -287,7 +286,7 @@
       </axis>
     </joint>
     <link name='rotor_3'>
-      <pose>-0.14745 -0.14525 0.151 0 0 0</pose>
+      <pose>-0.14745 -0.14525 0.251 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.005</mass>
@@ -318,7 +317,7 @@
         </surface>
       </collision>
       <visual name='rotor_3_visual'>
-        <pose>-0.14745 0.14525 -0.151 0 0 0</pose>
+        <pose>-0.14745 0.14525 -0.051 0 0 0</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
