@@ -150,7 +150,7 @@
             </friction>
           </surface>
         </collision>
-        <collision name='wall_3'>
+<!--        <collision name='wall_3'>
           <pose frame=''>-1.48 7.43 1.415 0 -0 0</pose>
           <geometry>
             <box>
@@ -171,6 +171,7 @@
             </friction>
           </surface>
         </collision>
+-->
         <collision name='wall_4'>
           <pose frame=''>2.09 8.9 1.435 0 -0 0</pose>
           <geometry>
