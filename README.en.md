@@ -1,7 +1,6 @@
 # XTDrone
 
 <div id="sidebar"><a href="./README.md" target="_blank"><font color=#0000FF size=5px >[中文版]<font></center><a></div>
-
 #### Description
 This is a customizable Multi-Rotor UAVs simulation platform based on PX4 and ROS, on which developers can quickly verify algorithms. Such as:
 
@@ -9,18 +8,19 @@ This is a customizable Multi-Rotor UAVs simulation platform based on PX4 and ROS
 <img src="./gif/human_tracking.gif" width="640" height="368" /> 
 
 2. Visual SLAM
-    <img src="./gif/vslam.gif" width="640" height="368" /> 
+<img src="./gif/vslam.gif" width="640" height="368" /> 
 
 3. Laser Slam
-    <img src="./gif/laser_slam.gif" width="640" height="368" /> 
+<img src="./gif/laser_slam.gif" width="640" height="368" /> 
 
 4. VIO 
-    <img src="./gif/vio.gif" width="640" height="368" />  
+<img src="./gif/vio.gif" width="640" height="368" />  
 
 5. Motion Planning
-    <img src="./gif/motion_planning.gif" width="640" height="368" />  
+<img src="./gif/motion_planning.gif" width="640" height="368" />  
 
-6. Collaboration<img src="./gif/cooperation.gif" width="640" height="368" />  
+6. Formation
+<img src="./gif/cooperation.gif" width="640" height="368" />  
 
 #### Software Architecture
 - Comunication: The communication between PX4 and ROS is encapsulated in the Python class, and multi-machine communication starts multiple processes
@@ -57,7 +57,7 @@ This is a customizable Multi-Rotor UAVs simulation platform based on PX4 and ROS
 
 #### Installation
 
-View the tutorial doc [XTDrone](https://www.yuque.com/qvdzhs/xtdrone_manual_cn)
+View the tutorial doc [XTDrone](https://www.yuque.com/qvdzhs/xtdrone_manual_en)
 
 #### Contribution
 
