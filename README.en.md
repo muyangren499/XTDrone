@@ -58,7 +58,7 @@ This is a customizable Multi-Rotor UAVs simulation platform based on PX4 and ROS
 
 #### Installation
 
-View the tutorial doc [XTDrone](https://www.yuque.com/qvdzhs/xtdrone_manual_en)
+View the tutorial doc [XTDrone](https://www.yuque.com/xtdrone/manual_en)
 
 #### Contribution
 
