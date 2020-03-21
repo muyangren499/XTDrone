@@ -1,6 +1,6 @@
 # XTDrone
 
-<div id="sidebar"><a href="./README.en.md" target="_blank"><font color=#0000FF size=5px >[EN]<font></center><a></div>
+<div id="sidebar"><a href="./README.en.md" target="_blank"><font color=#0000FF size=5px >[ENGLISH]<font></center><a></div>
 
 #### 介绍
 这是基于PX4和ROS的无人机仿真平台，在这个平台上，开发者可以快速验证算法。如：
